@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chaitanya Merugu — SAP Technical Consultant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0f1e;
+      --surface: #111827;
+      --surface2: #1a2236;
+      --accent: #00c6ff;
+      --accent2: #7b5cff;
+      --gold: #f0a500;
+      --text: #e8eaf0;
+      --muted: #8892a4;
+      --border: rgba(255,255,255,0.07);
+      --radius: 14px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.1rem 5%;
+      background: rgba(10,15,30,0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.3rem;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500; letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: 0.3s; }
+
+    /* ── HERO ── */
+    #home {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 7rem 5% 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,198,255,0.12) 0%, transparent 70%);
+      top: -100px; right: -100px; pointer-events: none;
+    }
+    .hero-glow2 {
+      position: absolute; width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(123,92,255,0.1) 0%, transparent 70%);
+      bottom: 0; left: 10%; pointer-events: none;
+    }
+    .hero-content { max-width: 800px; position: relative; }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(0,198,255,0.1);
+      border: 1px solid rgba(0,198,255,0.3);
+      color: var(--accent);
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em;
+      padding: 0.35rem 1rem; border-radius: 50px;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+    .hero-name {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800; line-height: 1.05;
+      margin-bottom: 1rem;
+    }
+    .hero-name span {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-tagline {
+      font-size: 1.2rem; color: var(--muted); font-weight: 300;
+      max-width: 600px; margin-bottom: 2.5rem;
+    }
+    .hero-tags {
+      display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2.5rem;
+    }
+    .hero-tag {
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 0.35rem 0.9rem; border-radius: 50px;
+      font-size: 0.82rem; font-weight: 500; color: var(--text);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .hero-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; padding: 0.75rem 1.8rem;
+      border-radius: 8px; text-decoration: none;
+      font-weight: 600; font-size: 0.95rem;
+      transition: opacity 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-2px); }
+    .btn-outline {
+      border: 1px solid var(--border);
+      color: var(--text); padding: 0.75rem 1.8rem;
+      border-radius: 8px; text-decoration: none;
+      font-weight: 500; font-size: 0.95rem;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* ── SECTIONS ── */
+    section { padding: 6rem 5%; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+      font-weight: 800; margin-bottom: 3rem;
+    }
+    .section-title span { color: var(--muted); }
+
+    /* ── ABOUT ── */
+    #about { background: var(--surface); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .about-text p { color: var(--muted); font-size: 1.02rem; margin-bottom: 1.2rem; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .stat-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.4rem;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: var(--accent); }
+    .stat-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.2rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-label { font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* ── SKILLS ── */
+    #skills { background: var(--bg); }
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .skill-group {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .skill-group:hover { border-color: var(--accent2); transform: translateY(-3px); }
+    .skill-group-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1rem;
+      color: var(--accent2); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .skill-group-title .icon { font-size: 1.1rem; }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .skill-pill {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.75rem; border-radius: 50px;
+      font-size: 0.8rem; color: var(--text);
+    }
+
+    /* ── EXPERIENCE ── */
+    #experience { background: var(--surface); }
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+    }
+    .timeline-item { position: relative; margin-bottom: 3.5rem; }
+    .timeline-dot {
+      position: absolute; left: -2.45rem; top: 0.5rem;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: 2px solid var(--bg);
+    }
+    .timeline-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem;
+      transition: border-color 0.2s;
+    }
+    .timeline-card:hover { border-color: var(--accent); }
+    .timeline-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.3rem; }
+    .job-title { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; }
+    .job-date {
+      background: rgba(0,198,255,0.1); border: 1px solid rgba(0,198,255,0.25);
+      color: var(--accent); padding: 0.2rem 0.8rem; border-radius: 50px;
+      font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+    }
+    .job-company { color: var(--accent2); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .job-location { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.2rem; }
+    .job-bullets { list-style: none; }
+    .job-bullets li {
+      color: var(--muted); font-size: 0.93rem;
+      padding: 0.35rem 0; padding-left: 1.2rem;
+      position: relative;
+    }
+    .job-bullets li::before {
+      content: '▸'; color: var(--accent);
+      position: absolute; left: 0;
+    }
+    .job-bullets li strong { color: var(--text); }
+    .job-tech { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 1.2rem; }
+    .tech-tag {
+      background: rgba(123,92,255,0.12); border: 1px solid rgba(123,92,255,0.25);
+      color: var(--accent2); padding: 0.25rem 0.7rem; border-radius: 50px;
+      font-size: 0.77rem; font-weight: 600;
+    }
+
+    /* ── EDUCATION ── */
+    #education { background: var(--bg); }
+    .edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+    .edu-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .edu-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+    .edu-degree { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .edu-school { color: var(--gold); font-weight: 600; margin-bottom: 0.2rem; }
+    .edu-meta { color: var(--muted); font-size: 0.85rem; }
+
+    /* ── ACHIEVEMENTS ── */
+    #achievements { background: var(--surface); }
+    .achievements-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .achievement-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.8rem;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .achievement-card:hover { border-color: var(--gold); transform: translateY(-4px); }
+    .achievement-number {
+      font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--gold), #ff8c42);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      line-height: 1;
+    }
+    .achievement-label { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--bg); }
+    .contact-inner {
+      max-width: 700px; margin: 0 auto; text-align: center;
+    }
+    .contact-inner .section-label, .contact-inner .section-title { text-align: center; }
+    .contact-inner p { color: var(--muted); margin-bottom: 2.5rem; font-size: 1.05rem; }
+    .contact-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; }
+    .contact-link {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); text-decoration: none;
+      padding: 0.75rem 1.5rem; border-radius: var(--radius);
+      font-weight: 500; font-size: 0.95rem;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .contact-link:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 2rem 5%;
+      border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 0.85rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.7s ease both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.25s; }
+    .delay-3 { animation-delay: 0.4s; }
+    .delay-4 { animation-delay: 0.55s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--surface); padding: 1.5rem 5%; gap: 1.2rem; border-bottom: 1px solid var(--border); }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .hero-name { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#home">CM</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#achievements">Achievements</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-content">
+    <div class="hero-badge fade-up">SAP Technical Consultant</div>
+    <h1 class="hero-name fade-up delay-1">Chaitanya<br/><span>Merugu</span></h1>
+    <p class="hero-tagline fade-up delay-2">
+      5+ years driving S/4HANA modernization, SAP BTP extension development, and enterprise HR/payroll automation across government and multinational landscapes.
+    </p>
+    <div class="hero-tags fade-up delay-3">
+      <span class="hero-tag">SAP BTP</span>
+      <span class="hero-tag">S/4HANA</span>
+      <span class="hero-tag">RAP / CAP</span>
+      <span class="hero-tag">ABAP Objects</span>
+      <span class="hero-tag">Fiori / UI5</span>
+      <span class="hero-tag">CDS Views</span>
+      <span class="hero-tag">OData Services</span>
+      <span class="hero-tag">Workflow Automation</span>
+    </div>
+    <div class="hero-btns fade-up delay-4">
+      <a href="#experience" class="btn-primary">View Experience</a>
+      <a href="#contact" class="btn-outline">Get In Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">About Me</div>
+  <div class="about-grid">
+    <div class="about-text">
+      <h2 class="section-title">Building enterprise <span>SAP solutions</span> that scale</h2>
+      <p>I'm an SAP Technical Consultant with deep expertise in S/4HANA modernization, SAP BTP cloud extension development, and global HR/payroll automation. I've delivered solutions for the Commonwealth of Pennsylvania and ADP's Global-View Payroll team spanning 43 countries.</p>
+      <p>My work sits at the intersection of enterprise architecture and practical engineering — building RESTful APIs, Fiori applications, workflow automations, and cloud-native extensions that reduce manual effort and drive measurable business outcomes.</p>
+      <p>Currently pursuing a Computer Information Systems degree with an AI specialization at Indiana Wesleyan University, I'm bridging classical SAP expertise with emerging AI-driven capabilities.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">5+</div>
+        <div class="stat-label">Years of SAP Experience</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">43</div>
+        <div class="stat-label">Countries — ADP Global Payroll</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">80%</div>
+        <div class="stat-label">Reduction in payroll manual effort</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">1000s</div>
+        <div class="stat-label">OSS Notes implemented</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">Technical Expertise</div>
+  <h2 class="section-title">Skills &amp; <span>Technologies</span></h2>
+  <div class="skills-grid">
+
+    <div class="skill-group">
+      <div class="skill-group-title"><span class="icon">☁️</span> SAP Cloud &amp; BTP</div>
+      <div class="skill-tags">
+        <span class="skill-pill">SAP BTP</span>
+        <span class="skill-pill">CAP (Node.js)</span>
+        <span class="skill-pill">RAP</span>
+        <span class="skill-pill">Build Process Automation</span>
+        <span class="skill-pill">S/4HANA Private Cloud</span>
+        <span class="skill-pill">Side-by-Side Extensions</span>
+        <span class="skill-pill">SAP Integration APIs</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title"><span class="icon">🔧</span> ABAP &amp; Development</div>
+      <div class="skill-tags">
+        <span class="skill-pill">ABAP Objects (OO)</span>
+        <span class="skill-pill">CDS Views</span>
+        <span class="skill-pill">OData Services</span>
+        <span class="skill-pill">RFC / BAPI / BAdI</span>
+        <span class="skill-pill">User Exits</span>
+        <span class="skill-pill">Data Dictionary (DDIC)</span>
+        <span class="skill-pill">ALV Reporting</span>
+        <span class="skill-pill">BDC / Data Migration</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title"><span class="icon">🖥️</span> UI &amp; Frontend</div>
+      <div class="skill-tags">
+        <span class="skill-pill">SAP Fiori / UI5</span>
+        <span class="skill-pill">Fiori Elements</span>
+        <span class="skill-pill">HTML5</span>
+        <span class="skill-pill">SAP Smartforms</span>
+        <span class="skill-pill">Adobe Forms</span>
+        <span class="skill-pill">SAP Scripts</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title"><span class="icon">👥</span> HR &amp; Payroll</div>
+      <div class="skill-tags">
+        <span class="skill-pill">SAP HCM</span>
+        <span class="skill-pill">Payroll Functions &amp; Schemas</span>
+        <span class="skill-pill">Global Payroll</span>
+        <span class="skill-pill">Custom Infotypes</span>
+        <span class="skill-pill">PNP/PNPCE Logical DB</span>
+        <span class="skill-pill">Compliance Automation</span>
+        <span class="skill-pill">HR Custom Development</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title"><span class="icon">⚙️</span> System &amp; Ops</div>
+      <div class="skill-tags">
+        <span class="skill-pill">ECC → S/4HANA Migration</span>
+        <span class="skill-pill">SPDD / SPAU</span>
+        <span class="skill-pill">SAP Notes Implementation</span>
+        <span class="skill-pill">Module Pool Programming</span>
+        <span class="skill-pill">AWS-Hosted SAP Cloud</span>
+        <span class="skill-pill">Agile / SDLC</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title"><span class="icon">💻</span> Programming</div>
+      <div class="skill-tags">
+        <span class="skill-pill">Python</span>
+        <span class="skill-pill">Java</span>
+        <span class="skill-pill">C / C++</span>
+        <span class="skill-pill">C#</span>
+        <span class="skill-pill">Node.js</span>
+        <span class="skill-pill">RESTful Services</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">Work History</div>
+  <h2 class="section-title">Professional <span>Experience</span></h2>
+  <div class="timeline">
+
+    <!-- Job 1 -->
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="timeline-header">
+          <div class="job-title">IES Applications Developer</div>
+          <div class="job-date">Oct 2023 – Oct 2025</div>
+        </div>
+        <div class="job-company">Commonwealth of Pennsylvania — Enterprise System Office (IESO)</div>
+        <div class="job-location">📍 Pennsylvania, USA</div>
+        <ul class="job-bullets">
+          <li>Led enterprise-scale <strong>S/4HANA modernization</strong> and SAP BTP extension initiatives, supporting HR, Finance, and logistics operations across state-wide systems.</li>
+          <li>Supported migration from on-premises ECC to <strong>S/4HANA Private Cloud (AWS-hosted)</strong>, performing technical remediation and RAP-based application readiness.</li>
+          <li>Designed and developed <strong>side-by-side extensions</strong> using SAP BTP (CAP, RAP, CDS Views, OData Services) for HR and finance use cases.</li>
+          <li>Built Fiori elements applications consuming OData Services to enable streamlined user workflows.</li>
+          <li>Architected invoice and leave approval workflows using <strong>Build Process Automation</strong>, improving HR process turnaround time by <strong>30%</strong>.</li>
+          <li>Automated supplier create/change workflows, improving compliance tracking and audit transparency.</li>
+          <li>Developed inbound/outbound APIs for cross-system integration using <strong>SAP Business Accelerator Hub</strong>.</li>
+          <li>Implemented payroll enhancements for retroactive medical insurance coverage adjustments, ensuring regulatory compliance.</li>
+        </ul>
+        <div class="job-tech">
+          <span class="tech-tag">SAP BTP</span>
+          <span class="tech-tag">RAP</span>
+          <span class="tech-tag">CAP</span>
+          <span class="tech-tag">CDS Views</span>
+          <span class="tech-tag">Fiori</span>
+          <span class="tech-tag">OData</span>
+          <span class="tech-tag">S/4HANA</span>
+          <span class="tech-tag">AWS</span>
+          <span class="tech-tag">Build Process Automation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job 2 -->
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="timeline-header">
+          <div class="job-title">SAP ABAP Consultant</div>
+          <div class="job-date">Aug 2019 – Nov 2022</div>
+        </div>
+        <div class="job-company">ADP Private Limited — Global-View Payroll Team</div>
+        <div class="job-location">📍 Hyderabad, India</div>
+        <ul class="job-bullets">
+          <li>Facilitated payroll operations for multinational organizations across <strong>43 countries</strong> on the Global-View Payroll platform.</li>
+          <li>Developed reports and custom applications using <strong>PNP/PNPCE logical database</strong>, macros, and function modules for cluster data processing.</li>
+          <li>Built payroll automation report reducing human error and manual execution time of payroll programs by <strong>80%</strong>.</li>
+          <li>Reduced Work Schedule Rule Calendar update time by <strong>70%</strong> through BDC data transfer programs.</li>
+          <li>Implemented thousands of OSS Notes achieving <strong>25% reduction in system downtime</strong> during upgrades.</li>
+          <li>Reduced automation testing time by <strong>20%</strong> across design, build, testing, and deployment phases.</li>
+          <li>Created and enhanced custom infotypes, Smartforms, Adobe Forms, and SAP Scripts per client requirements.</li>
+          <li>Mentored junior developers on HR ABAP and guided HRSP deployments following SAP best practices.</li>
+        </ul>
+        <div class="job-tech">
+          <span class="tech-tag">ABAP Objects</span>
+          <span class="tech-tag">SAP HCM</span>
+          <span class="tech-tag">Smartforms</span>
+          <span class="tech-tag">Adobe Forms</span>
+          <span class="tech-tag">BDC</span>
+          <span class="tech-tag">ALV</span>
+          <span class="tech-tag">BAPI</span>
+          <span class="tech-tag">BAdI</span>
+          <span class="tech-tag">CDS Views</span>
+          <span class="tech-tag">SPDD/SPAU</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-label">Academic Background</div>
+  <h2 class="section-title">Education</h2>
+  <div class="edu-grid">
+    <div class="edu-card">
+      <div class="edu-degree">Computer Information Systems — AI Specialization</div>
+      <div class="edu-school">Indiana Wesleyan University</div>
+      <div class="edu-meta">📍 Indiana, USA &nbsp;·&nbsp; Expected 2027</div>
+    </div>
+    <div class="edu-card">
+      <div class="edu-degree">Bachelor of Engineering — Computer Science</div>
+      <div class="edu-school">Vasavi College of Engineering</div>
+      <div class="edu-meta">📍 Hyderabad, India &nbsp;·&nbsp; 2019</div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="section-label">Impact by the Numbers</div>
+  <h2 class="section-title">Key <span>Achievements</span></h2>
+  <div class="achievements-grid">
+    <div class="achievement-card">
+      <div class="achievement-number">80%</div>
+      <div class="achievement-label">Reduction in payroll manual execution time at ADP</div>
+    </div>
+    <div class="achievement-card">
+      <div class="achievement-number">70%</div>
+      <div class="achievement-label">Faster Work Schedule Rule Calendar updates via BDC automation</div>
+    </div>
+    <div class="achievement-card">
+      <div class="achievement-number">30%</div>
+      <div class="achievement-label">Improvement in HR process turnaround via BPA workflows</div>
+    </div>
+    <div class="achievement-card">
+      <div class="achievement-number">25%</div>
+      <div class="achievement-label">Reduction in system downtime during SAP upgrades</div>
+    </div>
+    <div class="achievement-card">
+      <div class="achievement-number">43</div>
+      <div class="achievement-label">Countries supported on ADP Global-View Payroll platform</div>
+    </div>
+    <div class="achievement-card">
+      <div class="achievement-number">20%</div>
+      <div class="achievement-label">Reduction in automation testing time via streamlined SDLC</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-label">Let's Connect</div>
+    <h2 class="section-title">Get In <span>Touch</span></h2>
+    <p>Open to SAP consulting opportunities, technical collaborations, and enterprise architecture discussions. Let's build something great together.</p>
+    <div class="contact-links">
+      <a href="mailto:chaitanyamerugu09@gmail.com" class="contact-link">✉️ Email</a>
+      <a href="tel:+16128027087" class="contact-link">📞 +1 (612) 802-7087</a>
+      <a href="https://www.linkedin.com/in/chaitanya-merugu" target="_blank" class="contact-link">💼 LinkedIn</a>
+      <a href="#" class="contact-link">📍 Pennsylvania, USA</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 Chaitanya Merugu · SAP Technical Consultant</p>
+</footer>
+
+<script>
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.timeline-card, .skill-group, .stat-card, .edu-card, .achievement-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease, border-color 0.2s';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
