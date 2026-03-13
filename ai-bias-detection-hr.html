@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Bias Detection in HR Systems — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #08090f;
+      --surface: #0e0f1a;
+      --surface2: #141524;
+      --border: #1c1e32;
+      --accent: #ff6b6b;
+      --accent2: #ff9f43;
+      --blue: #4ecdc4;
+      --gold: #ffe66d;
+      --text: #cdd0e0;
+      --muted: #484d6a;
+      --white: #f0f2ff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Noise overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(255,107,107,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(78,205,196,0.05) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Subtle horizontal scan lines */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(255,107,107,0.012) 3px,
+        rgba(255,107,107,0.012) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 80px 60px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .breadcrumb span { color: var(--accent); }
+
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .tag {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--muted);
+    }
+    .tag.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(255,107,107,0.07);
+    }
+    .tag.blue {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: rgba(78,205,196,0.07);
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: clamp(30px, 5vw, 58px);
+      line-height: 1.05;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+    h1 em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 640px;
+      margin-bottom: 48px;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 80px;
+      max-width: 780px;
+    }
+    .stat {
+      flex: 1;
+      padding: 26px 28px;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-value {
+      font-family: 'Fraunces', serif;
+      font-size: 34px;
+      font-weight: 600;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 60px 100px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── OBJECTIVE ── */
+    .objective-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 36px 40px;
+      margin-bottom: 72px;
+      border-radius: 0 4px 4px 0;
+    }
+    .objective-block p {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--text);
+    }
+
+    /* ── BIAS DETECTION PIPELINE ── */
+    .pipeline-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 48px 40px;
+      margin-bottom: 72px;
+      overflow-x: auto;
+    }
+    .pipeline {
+      display: flex;
+      align-items: stretch;
+      min-width: 860px;
+    }
+    .pipe-stage {
+      flex: 1;
+      position: relative;
+    }
+    .pipe-stage::after {
+      content: '→';
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      font-size: 13px;
+      z-index: 2;
+    }
+    .pipe-stage:last-child::after { display: none; }
+    .pipe-box {
+      margin: 0 8px;
+      padding: 22px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-align: center;
+      height: 100%;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: default;
+    }
+    .pipe-box:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .pipe-icon { font-size: 20px; margin-bottom: 10px; }
+    .pipe-name {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .pipe-tech { font-size: 9px; color: var(--accent); letter-spacing: 0.06em; }
+
+    /* ── BIAS TYPES GRID ── */
+    .bias-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 72px;
+    }
+    .bias-card {
+      background: var(--surface);
+      padding: 32px 28px;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .bias-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .bias-card:hover { background: var(--surface2); }
+    .bias-card:hover::before { opacity: 1; }
+    .bias-icon { font-size: 22px; margin-bottom: 14px; }
+    .bias-card h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .bias-card p {
+      font-size: 11px;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+    .tech-chip {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      background: rgba(255,107,107,0.08);
+      border: 1px solid rgba(255,107,107,0.2);
+      color: var(--accent);
+      border-radius: 2px;
+    }
+    .tech-chip.blue {
+      background: rgba(78,205,196,0.08);
+      border-color: rgba(78,205,196,0.2);
+      color: var(--blue);
+    }
+
+    /* ── ML METHODS ── */
+    .ml-table-section { margin-bottom: 72px; }
+    .ml-row {
+      display: grid;
+      grid-template-columns: 200px 1fr auto;
+      align-items: center;
+      padding: 18px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 2px;
+      gap: 24px;
+      transition: border-color 0.2s;
+    }
+    .ml-row:hover { border-color: var(--blue); }
+    .ml-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--blue);
+    }
+    .ml-desc {
+      font-size: 11px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+    .ml-badge {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── ETHICS FRAMEWORK ── */
+    .ethics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 72px;
+    }
+    .ethics-cell {
+      background: var(--surface);
+      padding: 32px 36px;
+      transition: background 0.2s;
+    }
+    .ethics-cell:hover { background: var(--surface2); }
+    .ethics-num {
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      margin-bottom: 14px;
+    }
+    .ethics-cell h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+    .ethics-cell p {
+      font-size: 12px;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+
+    /* ── PROCESS STEPS ── */
+    .process-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 72px;
+    }
+    .process-item {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .process-item:hover { border-color: var(--accent); }
+    .process-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface2);
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--border);
+      border-right: 1px solid var(--border);
+    }
+    .process-body { padding: 22px 28px; }
+    .process-body h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .process-body p {
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    /* ── TECH TABLE ── */
+    .tech-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 72px;
+      font-size: 12px;
+    }
+    .tech-table th {
+      text-align: left;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 20px 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tech-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .tech-table tr:hover td { background: var(--surface); }
+    .tech-table td:first-child { color: var(--accent); font-weight: 500; }
+    .tech-table td:last-child { color: var(--muted); }
+
+    /* ── VALUE BAND ── */
+    .value-band {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 48px 44px;
+      margin-bottom: 72px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px;
+    }
+    .value-metric {
+      font-family: 'Fraunces', serif;
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .value-item h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .value-item p {
+      font-size: 11px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    /* ── CALLOUT ── */
+    .callout {
+      border: 1px solid rgba(255,107,107,0.25);
+      background: rgba(255,107,107,0.04);
+      border-radius: 4px;
+      padding: 28px 36px;
+      margin-bottom: 72px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .callout-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .callout p {
+      font-family: 'Fraunces', serif;
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--text);
+    }
+    .callout p strong {
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 36px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-left {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    .footer-left span { color: var(--accent); }
+    .back-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--accent);
+      padding: 8px 20px;
+      border-radius: 2px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .back-btn:hover { background: var(--accent); color: var(--bg); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero > * { animation: fadeUp 0.6s ease both; }
+    .hero > *:nth-child(1) { animation-delay: 0.05s; }
+    .hero > *:nth-child(2) { animation-delay: 0.10s; }
+    .hero > *:nth-child(3) { animation-delay: 0.15s; }
+    .hero > *:nth-child(4) { animation-delay: 0.20s; }
+    .hero > *:nth-child(5) { animation-delay: 0.25s; }
+    .hero > *:nth-child(6) { animation-delay: 0.30s; }
+
+    @media (max-width: 700px) {
+      .hero, .content { padding-left: 24px; padding-right: 24px; }
+      .bias-grid { grid-template-columns: 1fr; }
+      .ethics-grid { grid-template-columns: 1fr; }
+      .value-band { grid-template-columns: 1fr; gap: 28px; }
+      .stats { flex-direction: column; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .ml-row { grid-template-columns: 1fr; gap: 8px; }
+      .footer { flex-direction: column; gap: 20px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="breadcrumb">Portfolio &rsaquo; <span>AI Bias Detection</span></div>
+
+  <div class="tag-row">
+    <div class="tag active">Python</div>
+    <div class="tag active">Machine Learning</div>
+    <div class="tag active">AI Ethics</div>
+    <div class="tag blue">SAP HCM</div>
+    <div class="tag blue">AIML-500</div>
+    <div class="tag">Responsible AI</div>
+  </div>
+
+  <h1>AI-Driven Bias<br/>Detection in<br/><em>Enterprise HR Systems</em></h1>
+
+  <p class="subtitle">
+    Bridging SAP HCM technical expertise with responsible AI — a practical framework for detecting algorithmic bias in automated HR decision-making systems before it impacts employees across global payroll operations.
+  </p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">ML</div>
+      <div class="stat-label">Classification models applied</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">2</div>
+      <div class="stat-label">Domains bridged: SAP + AI</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">∞</div>
+      <div class="stat-label">Employees protected at scale</div>
+    </div>
+  </div>
+</header>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <!-- OBJECTIVE -->
+  <div class="section-label">01 &mdash; Objective</div>
+  <div class="objective-block">
+    <p>
+      Explore how AI/ML techniques can detect and mitigate bias in enterprise HR data — combining SAP HCM technical expertise with AI specialization coursework to address fairness in automated HR decision-making systems.
+    </p>
+  </div>
+
+  <!-- DETECTION PIPELINE -->
+  <div class="section-label">02 &mdash; Detection Pipeline</div>
+  <h2>Bias Identification Workflow</h2>
+  <div class="pipeline-wrap">
+    <div class="pipeline">
+      <div class="pipe-stage">
+        <div class="pipe-box">
+          <div class="pipe-icon">🗃️</div>
+          <div class="pipe-name">HR Data Input</div>
+          <div class="pipe-tech">Infotype Structures</div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-box">
+          <div class="pipe-icon">🔍</div>
+          <div class="pipe-name">Pattern Analysis</div>
+          <div class="pipe-tech">Python · Pandas</div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-box">
+          <div class="pipe-icon">🤖</div>
+          <div class="pipe-name">ML Classification</div>
+          <div class="pipe-tech">Scikit-learn</div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-box">
+          <div class="pipe-icon">⚖️</div>
+          <div class="pipe-name">Bias Scoring</div>
+          <div class="pipe-tech">Fairness Metrics</div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-box">
+          <div class="pipe-icon">🛡️</div>
+          <div class="pipe-name">Mitigation</div>
+          <div class="pipe-tech">Ethics Framework</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BIAS TYPES -->
+  <div class="section-label">03 &mdash; Bias Typology</div>
+  <h2>Bias Categories Examined</h2>
+  <div class="bias-grid">
+    <div class="bias-card">
+      <div class="bias-icon">💰</div>
+      <h3>Payroll Bias</h3>
+      <p>Statistical disparity detection in wage type distributions across demographic cohorts — identifying patterns in payroll clusters that suggest systemic compensation inequity.</p>
+      <span class="tech-chip">Wage Types · Clusters</span>
+    </div>
+    <div class="bias-card">
+      <div class="bias-icon">📈</div>
+      <h3>Performance Bias</h3>
+      <p>Classification model analysis of performance rating distributions — examining whether evaluation outcomes correlate with protected attributes encoded in HCM infotype data.</p>
+      <span class="tech-chip">ML Classification</span>
+    </div>
+    <div class="bias-card">
+      <div class="bias-icon">🔄</div>
+      <h3>Algorithmic Amplification</h3>
+      <p>Detection of feedback loops where biased historical HR decisions are encoded as training signal — causing automated systems to perpetuate and amplify existing inequities at scale.</p>
+      <span class="tech-chip blue">Training Data</span>
+    </div>
+    <div class="bias-card">
+      <div class="bias-icon">🏗️</div>
+      <h3>Structural Data Bias</h3>
+      <p>Analysis of how SAP HCM infotype architecture and field design can inadvertently encode demographic proxies — surfacing structural data biases invisible in individual records.</p>
+      <span class="tech-chip">Infotype Schema</span>
+    </div>
+    <div class="bias-card">
+      <div class="bias-icon">🌐</div>
+      <h3>Cross-Country Disparity</h3>
+      <p>Comparison of automated HR decision patterns across country-specific payroll configurations — identifying where regional schema differences create inconsistent fairness outcomes.</p>
+      <span class="tech-chip blue">Multinational</span>
+    </div>
+    <div class="bias-card">
+      <div class="bias-icon">🎯</div>
+      <h3>Selection & Promotion Bias</h3>
+      <p>Examination of automated selection and promotion recommendation outputs for disparate impact — applying statistical significance tests against protected class distributions.</p>
+      <span class="tech-chip">Disparate Impact</span>
+    </div>
+  </div>
+
+  <!-- ML METHODS -->
+  <div class="ml-table-section">
+    <div class="section-label">04 &mdash; ML Methods</div>
+    <h2>Models & Techniques Applied</h2>
+    <div class="ml-row">
+      <div class="ml-name">Logistic Regression</div>
+      <div class="ml-desc">Baseline classification for identifying binary outcome disparities in performance and promotion datasets across demographic groups.</div>
+      <div class="ml-badge">Supervised</div>
+    </div>
+    <div class="ml-row">
+      <div class="ml-name">Decision Tree Analysis</div>
+      <div class="ml-desc">Interpretable tree models for surfacing which infotype features most strongly predict compensation and rating outcomes — enabling explainable bias attribution.</div>
+      <div class="ml-badge">Explainability</div>
+    </div>
+    <div class="ml-row">
+      <div class="ml-name">Statistical Disparity Tests</div>
+      <div class="ml-desc">Applied chi-square tests, p-value analysis, and demographic parity metrics to quantify the statistical significance of detected bias patterns.</div>
+      <div class="ml-badge">Fairness Metrics</div>
+    </div>
+    <div class="ml-row">
+      <div class="ml-name">Anomaly Detection</div>
+      <div class="ml-desc">Unsupervised pattern detection to flag outlier compensation and performance clusters that diverge from expected distributions within demographic cohorts.</div>
+      <div class="ml-badge">Unsupervised</div>
+    </div>
+    <div class="ml-row">
+      <div class="ml-name">Feature Importance Analysis</div>
+      <div class="ml-desc">SHAP-inspired feature contribution analysis to identify which HR data fields function as demographic proxies — even when protected attributes are excluded from models.</div>
+      <div class="ml-badge">Proxy Detection</div>
+    </div>
+  </div>
+
+  <!-- RESPONSIBLE AI FRAMEWORK -->
+  <div class="section-label">05 &mdash; Responsible AI Framework</div>
+  <h2>SAP HCM Ethics Integration</h2>
+  <div class="ethics-grid">
+    <div class="ethics-cell">
+      <div class="ethics-num">Principle 01</div>
+      <h3>Data Minimisation</h3>
+      <p>HR bias detection models operate on anonymised infotype structures — protected attributes are analysed for disparity impact only, never used as predictive features in production automation.</p>
+    </div>
+    <div class="ethics-cell">
+      <div class="ethics-num">Principle 02</div>
+      <h3>Explainability by Design</h3>
+      <p>All bias detection outputs are designed to be interpretable by HR professionals without ML expertise — using plain-language disparity reports rather than black-box scores.</p>
+    </div>
+    <div class="ethics-cell">
+      <div class="ethics-num">Principle 03</div>
+      <h3>Human-in-the-Loop</h3>
+      <p>The framework positions AI as a detection and flagging layer — final HR decisions remain with human reviewers. Automated systems surface risk; people resolve it.</p>
+    </div>
+    <div class="ethics-cell">
+      <div class="ethics-num">Principle 04</div>
+      <h3>Continuous Monitoring</h3>
+      <p>Bias is not a one-time audit concern. The framework specifies recurring model evaluation cadences aligned with payroll cycles and performance review periods.</p>
+    </div>
+  </div>
+
+  <!-- CALLOUT -->
+  <div class="callout">
+    <div class="callout-icon">🎓</div>
+    <p>This artifact draws on principles from <strong>AIML-500</strong> coursework, bridging academic responsible AI frameworks with hands-on enterprise SAP HCM data architecture — translating theory into a practitioner-grade integration design.</p>
+  </div>
+
+  <!-- PROCESS STEPS -->
+  <div class="section-label">06 &mdash; Implementation Process</div>
+  <h2>Research & Build Sequence</h2>
+  <div class="process-list">
+    <div class="process-item">
+      <div class="process-num">1</div>
+      <div class="process-body">
+        <h3>HR Infotype Data Structure Analysis</h3>
+        <p>Analysed anonymised SAP HCM infotype data schemas — mapping which fields carry demographic information, compensation data, and performance indicators relevant to bias detection.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">2</div>
+      <div class="process-body">
+        <h3>Python ML Pipeline Construction</h3>
+        <p>Built a Python-based classification pipeline using scikit-learn, processing anonymised HR datasets to identify statistical disparities across payroll and performance dimensions.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">3</div>
+      <div class="process-body">
+        <h3>Bias Indicator Identification</h3>
+        <p>Applied multiple ML models and statistical tests to identify and quantify potential bias indicators — producing ranked disparity reports across demographic cohorts and HR process domains.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">4</div>
+      <div class="process-body">
+        <h3>Responsible AI Framework Design</h3>
+        <p>Designed the ethical integration framework for SAP HCM environments, drawing on AIML-500 course principles — specifying governance controls, monitoring cadences, and human oversight requirements.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">5</div>
+      <div class="process-body">
+        <h3>HR Technology Leader Playbook</h3>
+        <p>Synthesised findings into a practical playbook for HR technology leaders — translating ML outputs into actionable remediation guidance tied to specific SAP HCM configuration and process levers.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TECH TABLE -->
+  <div class="section-label">07 &mdash; Technology Stack</div>
+  <table class="tech-table">
+    <thead>
+      <tr>
+        <th>Layer</th>
+        <th>Technology</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Language</td>
+        <td>Python 3.x</td>
+        <td>ML pipeline, data analysis, fairness metrics</td>
+      </tr>
+      <tr>
+        <td>ML Framework</td>
+        <td>Scikit-learn</td>
+        <td>Classification models and evaluation metrics</td>
+      </tr>
+      <tr>
+        <td>Data Processing</td>
+        <td>Pandas / NumPy</td>
+        <td>Infotype data transformation and analysis</td>
+      </tr>
+      <tr>
+        <td>HR Platform</td>
+        <td>SAP HCM</td>
+        <td>Source data architecture and infotype schema</td>
+      </tr>
+      <tr>
+        <td>Ethics Grounding</td>
+        <td>AIML-500 Coursework</td>
+        <td>Responsible AI principles and governance framework</td>
+      </tr>
+      <tr>
+        <td>Fairness Metrics</td>
+        <td>Demographic Parity / Disparate Impact</td>
+        <td>Quantitative bias scoring and reporting</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- VALUE PROPOSITION -->
+  <div class="section-label">08 &mdash; Value Proposition</div>
+  <div class="value-band">
+    <div class="value-item">
+      <div class="value-metric">Early</div>
+      <h3>Pre-Impact Detection</h3>
+      <p>Identifies algorithmic bias before it affects employees — shifting HR fairness from reactive remediation to proactive detection integrated into the payroll cycle.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-metric">SAP+</div>
+      <h3>Enterprise-Native</h3>
+      <p>Designed specifically for SAP HCM data structures — not a generic fairness toolkit, but a framework that understands infotype architecture, wage types, and payroll clusters.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-metric">∞</div>
+      <h3>Global HR Scale</h3>
+      <p>Applicable to any SAP HCM environment managing multinational payroll — the framework scales from single-country operations to 43-country global HR systems.</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-left">
+    <span>Python · ML · AI Ethics</span> &mdash; HR Bias Detection Framework &mdash; AIML-500
+  </div>
+  <a href="index.html" class="back-btn">← Portfolio</a>
+</footer>
+
+</body>
+</html>

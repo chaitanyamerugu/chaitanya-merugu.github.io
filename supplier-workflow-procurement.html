@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Intelligent Supplier Workflow — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080c0e;
+      --surface: #0d1418;
+      --surface2: #121c21;
+      --border: #192530;
+      --accent: #00d4aa;
+      --accent2: #007a63;
+      --amber: #ffb830;
+      --sky: #38bdf8;
+      --text: #c4d4d0;
+      --muted: #45606a;
+      --white: #edfaf6;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Hexagonal dot grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(0,212,170,0.06) 1px, transparent 1px);
+      background-size: 36px 36px;
+      background-position: 0 0, 18px 18px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Top-right glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -150px; right: -150px;
+      width: 550px; height: 550px;
+      background: radial-gradient(circle, rgba(0,212,170,0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 80px 60px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .breadcrumb span { color: var(--accent); }
+
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .tag {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--muted);
+    }
+    .tag.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,212,170,0.07);
+    }
+    .tag.sky {
+      border-color: var(--sky);
+      color: var(--sky);
+      background: rgba(56,189,248,0.07);
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: clamp(30px, 5vw, 58px);
+      line-height: 1.05;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+    h1 em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 640px;
+      margin-bottom: 48px;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 80px;
+      max-width: 780px;
+    }
+    .stat {
+      flex: 1;
+      padding: 26px 28px;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-value {
+      font-family: 'Fraunces', serif;
+      font-size: 34px;
+      font-weight: 600;
+      color: var(--amber);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 60px 100px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── OBJECTIVE ── */
+    .objective-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 36px 40px;
+      margin-bottom: 72px;
+      border-radius: 0 4px 4px 0;
+    }
+    .objective-block p {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--text);
+    }
+
+    /* ── WORKFLOW DIAGRAM ── */
+    .workflow-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 48px 40px;
+      margin-bottom: 72px;
+      overflow-x: auto;
+    }
+
+    /* Two-row workflow: trigger row + approval row */
+    .wf-label {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .wf-row {
+      display: flex;
+      align-items: center;
+      min-width: 860px;
+      margin-bottom: 32px;
+    }
+    .wf-row:last-child { margin-bottom: 0; }
+    .wf-node { flex: 1; }
+    .wf-box {
+      margin: 0 6px;
+      padding: 18px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: default;
+    }
+    .wf-box:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .wf-box.highlight { border-color: rgba(0,212,170,0.4); background: rgba(0,212,170,0.05); }
+    .wf-icon { font-size: 18px; margin-bottom: 8px; }
+    .wf-name {
+      font-size: 10px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 3px;
+    }
+    .wf-sub { font-size: 9px; color: var(--accent); letter-spacing: 0.05em; }
+    .wf-arrow {
+      flex: 0 0 28px;
+      text-align: center;
+      color: var(--accent);
+      font-size: 13px;
+    }
+    .wf-down {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin: 4px 0 8px;
+      min-width: 860px;
+    }
+
+    /* ── COMPONENT GRID ── */
+    .comp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 72px;
+    }
+    .comp-cell {
+      background: var(--surface);
+      padding: 34px 36px;
+      transition: background 0.2s;
+    }
+    .comp-cell:hover { background: var(--surface2); }
+    .comp-num {
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      margin-bottom: 14px;
+    }
+    .comp-cell h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+    .comp-cell p {
+      font-size: 12px;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+    .tech-chip {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      background: rgba(0,212,170,0.08);
+      border: 1px solid rgba(0,212,170,0.2);
+      color: var(--accent);
+      border-radius: 2px;
+    }
+    .tech-chip.sky {
+      background: rgba(56,189,248,0.08);
+      border-color: rgba(56,189,248,0.2);
+      color: var(--sky);
+    }
+
+    /* ── DECISION TABLE PREVIEW ── */
+    .dt-section { margin-bottom: 72px; }
+    .dt-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .dt-table thead tr {
+      background: var(--surface2);
+    }
+    .dt-table th {
+      text-align: left;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+    .dt-table th:last-child { border-right: none; }
+    .dt-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .dt-table td:last-child { border-right: none; }
+    .dt-table tr:last-child td { border-bottom: none; }
+    .dt-table tr:hover td { background: var(--surface2); }
+    .dt-rule {
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .dt-outcome {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 2px;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .dt-outcome.approve {
+      background: rgba(0,212,170,0.1);
+      border: 1px solid rgba(0,212,170,0.25);
+      color: var(--accent);
+    }
+    .dt-outcome.escalate {
+      background: rgba(255,184,48,0.1);
+      border: 1px solid rgba(255,184,48,0.25);
+      color: var(--amber);
+    }
+    .dt-outcome.reject {
+      background: rgba(255,100,100,0.1);
+      border: 1px solid rgba(255,100,100,0.25);
+      color: #ff6464;
+    }
+
+    /* ── PROCESS STEPS ── */
+    .process-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 72px;
+    }
+    .process-item {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .process-item:hover { border-color: var(--accent2); }
+    .process-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface2);
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--border);
+      border-right: 1px solid var(--border);
+    }
+    .process-body { padding: 22px 28px; }
+    .process-body h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .process-body p {
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    /* ── AUDIT TRAIL CALLOUT ── */
+    .audit-callout {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 72px;
+    }
+    .audit-card {
+      background: var(--surface);
+      padding: 28px 30px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s;
+    }
+    .audit-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .audit-card:hover { background: var(--surface2); }
+    .audit-card:hover::after { opacity: 1; }
+    .audit-icon { font-size: 20px; margin-bottom: 12px; }
+    .audit-card h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .audit-card p {
+      font-size: 11px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    /* ── TECH TABLE ── */
+    .tech-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 72px;
+      font-size: 12px;
+    }
+    .tech-table th {
+      text-align: left;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 20px 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tech-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .tech-table tr:hover td { background: var(--surface); }
+    .tech-table td:first-child { color: var(--accent); font-weight: 500; }
+    .tech-table td:last-child { color: var(--muted); }
+
+    /* ── VALUE BAND ── */
+    .value-band {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 48px 44px;
+      margin-bottom: 72px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px;
+    }
+    .value-metric {
+      font-family: 'Fraunces', serif;
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--amber);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .value-item h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .value-item p {
+      font-size: 11px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 36px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-left {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    .footer-left span { color: var(--accent); }
+    .back-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--accent);
+      padding: 8px 20px;
+      border-radius: 2px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .back-btn:hover { background: var(--accent); color: var(--bg); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero > * { animation: fadeUp 0.6s ease both; }
+    .hero > *:nth-child(1) { animation-delay: 0.05s; }
+    .hero > *:nth-child(2) { animation-delay: 0.10s; }
+    .hero > *:nth-child(3) { animation-delay: 0.15s; }
+    .hero > *:nth-child(4) { animation-delay: 0.20s; }
+    .hero > *:nth-child(5) { animation-delay: 0.25s; }
+    .hero > *:nth-child(6) { animation-delay: 0.30s; }
+
+    @media (max-width: 700px) {
+      .hero, .content { padding-left: 24px; padding-right: 24px; }
+      .comp-grid { grid-template-columns: 1fr; }
+      .audit-callout { grid-template-columns: 1fr; }
+      .value-band { grid-template-columns: 1fr; gap: 28px; }
+      .stats { flex-direction: column; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .footer { flex-direction: column; gap: 20px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="breadcrumb">Portfolio &rsaquo; <span>Intelligent Supplier Workflow</span></div>
+
+  <div class="tag-row">
+    <div class="tag active">SAP BTP</div>
+    <div class="tag active">Build Process Automation</div>
+    <div class="tag active">OData</div>
+    <div class="tag active">CDS Views</div>
+    <div class="tag sky">RESTful APIs</div>
+    <div class="tag sky">Public Sector</div>
+  </div>
+
+  <h1>Intelligent Supplier<br/><em>Procurement Workflow</em></h1>
+
+  <p class="subtitle">
+    Automated supplier create and change workflows for Pennsylvania's state procurement — decision-table-driven compliance rules, CDS-based OData services, and a full audit trail for every approval action.
+  </p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">100%</div>
+      <div class="stat-label">Automated audit trail coverage</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">Zero</div>
+      <div class="stat-label">Manual compliance gaps</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">BTP</div>
+      <div class="stat-label">Replicable public sector pattern</div>
+    </div>
+  </div>
+</header>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <!-- OBJECTIVE -->
+  <div class="section-label">01 &mdash; Objective</div>
+  <div class="objective-block">
+    <p>
+      Automate supplier create and change workflows for Pennsylvania's procurement process — improving compliance tracking, reducing manual approval overhead, and ensuring full audit transparency across all state procurement operations.
+    </p>
+  </div>
+
+  <!-- WORKFLOW DIAGRAM -->
+  <div class="section-label">02 &mdash; Workflow Architecture</div>
+  <h2>Supplier Lifecycle Automation</h2>
+  <div class="workflow-wrap">
+    <div class="wf-label">Trigger layer</div>
+    <div class="wf-row">
+      <div class="wf-node">
+        <div class="wf-box highlight">
+          <div class="wf-icon">🏢</div>
+          <div class="wf-name">Supplier Create</div>
+          <div class="wf-sub">New Record</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-node">
+        <div class="wf-box highlight">
+          <div class="wf-icon">✏️</div>
+          <div class="wf-name">Supplier Change</div>
+          <div class="wf-sub">Master Data Edit</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-node">
+        <div class="wf-box">
+          <div class="wf-icon">🔗</div>
+          <div class="wf-name">OData Trigger</div>
+          <div class="wf-sub">CDS Service</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-node">
+        <div class="wf-box">
+          <div class="wf-icon">⚙️</div>
+          <div class="wf-name">SBPA Engine</div>
+          <div class="wf-sub">Process Instance</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-node">
+        <div class="wf-box">
+          <div class="wf-icon">📋</div>
+          <div class="wf-name">Decision Table</div>
+          <div class="wf-sub">Compliance Rules</div>
+        </div>
+      </div>
+    </div>
+    <div class="wf-down">↓ &nbsp; Route by compliance outcome</div>
+    <div class="wf-label">Resolution layer</div>
+    <div class="wf-row">
+      <div class="wf-node">
+        <div class="wf-box">
+          <div class="wf-icon">✅</div>
+          <div class="wf-name">Auto-Approve</div>
+          <div class="wf-sub">Low-risk suppliers</div>
+        </div>
+      </div>
+      <div class="wf-arrow">|</div>
+      <div class="wf-node">
+        <div class="wf-box">
+          <div class="wf-icon">👤</div>
+          <div class="wf-name">Officer Review</div>
+          <div class="wf-sub">Compliance task</div>
+        </div>
+      </div>
+      <div class="wf-arrow">|</div>
+      <div class="wf-node">
+        <div class="wf-box">
+          <div class="wf-icon">🔔</div>
+          <div class="wf-name">Notification</div>
+          <div class="wf-sub">Alert triggers</div>
+        </div>
+      </div>
+      <div class="wf-arrow">|</div>
+      <div class="wf-node">
+        <div class="wf-box">
+          <div class="wf-icon">🗂️</div>
+          <div class="wf-name">Audit Log</div>
+          <div class="wf-sub">Full trail written</div>
+        </div>
+      </div>
+      <div class="wf-arrow">|</div>
+      <div class="wf-node">
+        <div class="wf-box highlight">
+          <div class="wf-icon">🏛️</div>
+          <div class="wf-name">S/4HANA Update</div>
+          <div class="wf-sub">Master data written</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPONENT BREAKDOWN -->
+  <div class="section-label">03 &mdash; Core Components</div>
+  <h2>Technical Building Blocks</h2>
+  <div class="comp-grid">
+    <div class="comp-cell">
+      <div class="comp-num">Component 01</div>
+      <h3>SAP Build Process Automation</h3>
+      <p>The workflow engine at the heart of the solution. Models the full supplier approval lifecycle — create, review, escalation, and rejection — as a configurable, no-code process with embedded decision logic.</p>
+      <span class="tech-chip">SBPA · Forms · Tasks</span>
+    </div>
+    <div class="comp-cell">
+      <div class="comp-num">Component 02</div>
+      <h3>Decision Tables (Compliance Rules)</h3>
+      <p>Compliance routing logic is externalised into decision tables — allowing procurement officers to update rules without developer involvement. Rules evaluate supplier category, spend threshold, and risk flags to determine approval routing.</p>
+      <span class="tech-chip">Decision Tables · Rules</span>
+    </div>
+    <div class="comp-cell">
+      <div class="comp-num">Component 03</div>
+      <h3>CDS-Based OData Services</h3>
+      <p>Supplier master data is exposed via CDS view-based OData V4 services — providing the workflow engine with real-time, structured access to supplier records without direct database coupling.</p>
+      <span class="tech-chip sky">CDS Views · OData V4</span>
+    </div>
+    <div class="comp-cell">
+      <div class="comp-num">Component 04</div>
+      <h3>RESTful API Integration</h3>
+      <p>Bidirectional RESTful API communication between SAP BTP and the S/4HANA backend ensures approved supplier changes are written back to the master data system atomically, with full error handling and retry logic.</p>
+      <span class="tech-chip sky">REST · SAP BTP · APIs</span>
+    </div>
+  </div>
+
+  <!-- DECISION TABLE PREVIEW -->
+  <div class="dt-section">
+    <div class="section-label">04 &mdash; Compliance Logic</div>
+    <h2>Decision Table: Routing Rules</h2>
+    <table class="dt-table">
+      <thead>
+        <tr>
+          <th>Rule</th>
+          <th>Supplier Type</th>
+          <th>Spend Threshold</th>
+          <th>Risk Flag</th>
+          <th>Outcome</th>
+          <th>Approver</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dt-rule">R-01</td>
+          <td>Standard Vendor</td>
+          <td>&lt; $10,000</td>
+          <td>None</td>
+          <td><span class="dt-outcome approve">Auto-Approve</span></td>
+          <td style="color:var(--muted)">System</td>
+        </tr>
+        <tr>
+          <td class="dt-rule">R-02</td>
+          <td>Standard Vendor</td>
+          <td>$10,000 – $100,000</td>
+          <td>None</td>
+          <td><span class="dt-outcome escalate">Compliance Review</span></td>
+          <td style="color:var(--muted)">Officer L1</td>
+        </tr>
+        <tr>
+          <td class="dt-rule">R-03</td>
+          <td>Any</td>
+          <td>&gt; $100,000</td>
+          <td>Any</td>
+          <td><span class="dt-outcome escalate">Senior Escalation</span></td>
+          <td style="color:var(--muted)">Officer L2</td>
+        </tr>
+        <tr>
+          <td class="dt-rule">R-04</td>
+          <td>Any</td>
+          <td>Any</td>
+          <td>Sanctions / Debarred</td>
+          <td><span class="dt-outcome reject">Auto-Reject</span></td>
+          <td style="color:var(--muted)">System + Alert</td>
+        </tr>
+        <tr>
+          <td class="dt-rule">R-05</td>
+          <td>Critical Infrastructure</td>
+          <td>Any</td>
+          <td>Any</td>
+          <td><span class="dt-outcome escalate">Senior Escalation</span></td>
+          <td style="color:var(--muted)">Officer L2</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- AUDIT TRAIL -->
+  <div class="section-label">05 &mdash; Audit &amp; Compliance</div>
+  <h2>Automated Audit Trail System</h2>
+  <div class="audit-callout">
+    <div class="audit-card">
+      <div class="audit-icon">🕐</div>
+      <h3>Timestamped Actions</h3>
+      <p>Every workflow event — submission, review, approval, rejection, escalation — is logged with a precise timestamp and actor identity for full chronological accountability.</p>
+    </div>
+    <div class="audit-card">
+      <div class="audit-icon">👁️</div>
+      <h3>Compliance Officer Visibility</h3>
+      <p>Real-time notification triggers alert compliance officers to pending reviews, SLA breaches, and auto-rejected suppliers — eliminating passive monitoring requirements.</p>
+    </div>
+    <div class="audit-card">
+      <div class="audit-icon">📦</div>
+      <h3>Immutable Log Export</h3>
+      <p>Audit records are structured for export to state procurement reporting systems — providing regulators and auditors with tamper-evident, query-ready compliance documentation.</p>
+    </div>
+  </div>
+
+  <!-- PROCESS STEPS -->
+  <div class="section-label">06 &mdash; Implementation Process</div>
+  <h2>Build Sequence</h2>
+  <div class="process-list">
+    <div class="process-item">
+      <div class="process-num">1</div>
+      <div class="process-body">
+        <h3>Procurement Process Mapping</h3>
+        <p>Mapped Pennsylvania's existing supplier onboarding and change management process — identifying manual approval touchpoints, compliance rule sources, and audit logging gaps to be addressed by the automation.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">2</div>
+      <div class="process-body">
+        <h3>CDS View & OData Service Design</h3>
+        <p>Designed CDS views exposing supplier master data fields required by the workflow engine. Published as OData V4 services via SAP BTP, incorporating association navigation and filter capabilities for compliance rule evaluation.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">3</div>
+      <div class="process-body">
+        <h3>Workflow Modelling in SBPA</h3>
+        <p>Modelled the full supplier lifecycle workflow in SAP Build Process Automation — defining parallel approval lanes, SLA timers, escalation paths, and automatic notification triggers for each routing outcome.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">4</div>
+      <div class="process-body">
+        <h3>Decision Table Configuration</h3>
+        <p>Externalised compliance routing logic into configurable decision tables — translating procurement policy into structured rule sets that non-developers can maintain independently of the workflow code.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">5</div>
+      <div class="process-body">
+        <h3>RESTful API Integration & Write-Back</h3>
+        <p>Implemented RESTful API communication between the SBPA workflow and S/4HANA backend — ensuring approved supplier records are atomically written to master data with error handling and idempotency controls.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">6</div>
+      <div class="process-body">
+        <h3>Audit Logging & Notification Implementation</h3>
+        <p>Built automated audit trail logging into every workflow transition point and configured multi-channel notification triggers — email, task inbox, and compliance dashboard alerts — for complete process observability.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TECH TABLE -->
+  <div class="section-label">07 &mdash; Technology Stack</div>
+  <table class="tech-table">
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Technology</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Platform</td>
+        <td>SAP Business Technology Platform</td>
+        <td>Workflow runtime and integration middleware</td>
+      </tr>
+      <tr>
+        <td>Workflow Engine</td>
+        <td>SAP Build Process Automation</td>
+        <td>Approval routing, decision tables, SLA management</td>
+      </tr>
+      <tr>
+        <td>Data Layer</td>
+        <td>CDS Views</td>
+        <td>Supplier master data modelling and exposure</td>
+      </tr>
+      <tr>
+        <td>Service Layer</td>
+        <td>OData V4</td>
+        <td>RESTful data access for workflow engine</td>
+      </tr>
+      <tr>
+        <td>Integration</td>
+        <td>RESTful APIs</td>
+        <td>BTP ↔ S/4HANA bidirectional communication</td>
+      </tr>
+      <tr>
+        <td>Compliance</td>
+        <td>Decision Tables</td>
+        <td>Externalisable procurement routing rules</td>
+      </tr>
+      <tr>
+        <td>Audit</td>
+        <td>SBPA Audit Trail</td>
+        <td>Immutable event log for all workflow actions</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- VALUE PROPOSITION -->
+  <div class="section-label">08 &mdash; Value Proposition</div>
+  <div class="value-band">
+    <div class="value-item">
+      <div class="value-metric">Auto</div>
+      <h3>Compliance Enforcement</h3>
+      <p>Decision tables enforce procurement policy consistently on every supplier record — no rule is skipped, no approval manually bypassed, and no compliance officer left without visibility.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-metric">Full</div>
+      <h3>Audit Transparency</h3>
+      <p>Every decision, notification, and data change is logged immutably — giving state auditors and procurement leadership a complete, query-ready record of every supplier lifecycle event.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-metric">↻</div>
+      <h3>Replicable BTP Pattern</h3>
+      <p>The SBPA + CDS + OData architecture is a reusable blueprint for any public sector procurement automation — adaptable to other state agencies with minimal reconfiguration.</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-left">
+    <span>SAP BTP · SBPA · OData</span> &mdash; Supplier Workflow &mdash; Pennsylvania Procurement
+  </div>
+  <a href="index.html" class="back-btn">← Portfolio</a>
+</footer>
+
+</body>
+</html>
