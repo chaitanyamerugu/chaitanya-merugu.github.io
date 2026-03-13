@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payroll Automation Engine — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0d0b;
+      --surface: #0f1511;
+      --surface2: #161d18;
+      --border: #1e2b21;
+      --accent: #3ddc6e;
+      --accent2: #1a8c40;
+      --gold: #e8c84b;
+      --red: #ff4d4d;
+      --text: #ccd9cf;
+      --muted: #506058;
+      --white: #edf5ef;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle dot grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(61,220,110,0.07) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glow blob */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(61,220,110,0.05) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 80px 60px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .breadcrumb span { color: var(--accent); }
+
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .tag {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--muted);
+    }
+    .tag.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(61,220,110,0.06);
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1.05;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+    h1 em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 620px;
+      margin-bottom: 48px;
+    }
+
+    /* ── IMPACT STATS ── */
+    .stats {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 80px;
+      max-width: 780px;
+    }
+    .stat {
+      flex: 1;
+      padding: 26px 28px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .stat:last-child { border-right: none; }
+    .stat-value {
+      font-family: 'Fraunces', serif;
+      font-size: 38px;
+      font-weight: 600;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── CONTENT WRAPPER ── */
+    .content {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 60px 100px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── OBJECTIVE ── */
+    .objective-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 36px 40px;
+      margin-bottom: 72px;
+      border-radius: 0 4px 4px 0;
+    }
+    .objective-block p {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--text);
+    }
+
+    /* ── PIPELINE VISUAL ── */
+    .pipeline-section { margin-bottom: 72px; }
+
+    .pipeline-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 48px 40px;
+      overflow-x: auto;
+    }
+
+    .pipeline {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      min-width: 820px;
+    }
+
+    .pipe-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      position: relative;
+    }
+
+    .pipe-stage::after {
+      content: '→';
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      font-size: 14px;
+      z-index: 2;
+    }
+    .pipe-stage:last-child::after { display: none; }
+
+    .pipe-box {
+      width: 100%;
+      padding: 20px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: default;
+      margin: 0 8px;
+    }
+    .pipe-box:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+    .pipe-icon { font-size: 20px; margin-bottom: 10px; }
+    .pipe-name {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .pipe-tech {
+      font-size: 9px;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── COMPONENT BREAKDOWN ── */
+    .comp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 72px;
+    }
+    .comp-cell {
+      background: var(--surface);
+      padding: 34px 36px;
+      transition: background 0.2s;
+    }
+    .comp-cell:hover { background: var(--surface2); }
+    .comp-cell-num {
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      margin-bottom: 14px;
+    }
+    .comp-cell h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+    .comp-cell p {
+      font-size: 12px;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+    .tech-chip {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      background: rgba(61,220,110,0.08);
+      border: 1px solid rgba(61,220,110,0.2);
+      color: var(--accent);
+      border-radius: 2px;
+    }
+
+    /* ── PROCESS STEPS ── */
+    .process-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 72px;
+    }
+    .process-item {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .process-item:hover { border-color: var(--accent2); }
+    .process-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface2);
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--border);
+      border-right: 1px solid var(--border);
+    }
+    .process-body {
+      padding: 22px 28px;
+    }
+    .process-body h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .process-body p {
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    /* ── TECH TABLE ── */
+    .tech-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 72px;
+      font-size: 12px;
+    }
+    .tech-table th {
+      text-align: left;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 20px 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tech-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .tech-table tr:hover td { background: var(--surface); }
+    .tech-table td:first-child { color: var(--accent); font-weight: 500; }
+    .tech-table td:last-child { color: var(--muted); }
+
+    /* ── VALUE PROPOSITION ── */
+    .value-band {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 48px 44px;
+      margin-bottom: 72px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px;
+    }
+    .value-item { }
+    .value-metric {
+      font-family: 'Fraunces', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .value-item h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .value-item p {
+      font-size: 11px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    /* ── COUNTRY SCOPE BADGE ── */
+    .scope-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 72px;
+      flex-wrap: wrap;
+    }
+    .scope-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .scope-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      background: var(--surface);
+      font-size: 11px;
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .scope-badge:hover { border-color: var(--accent); }
+    .scope-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 36px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-left {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    .footer-left span { color: var(--accent); }
+    .back-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--accent);
+      padding: 8px 20px;
+      border-radius: 2px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .back-btn:hover { background: var(--accent); color: var(--bg); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero > * { animation: fadeUp 0.6s ease both; }
+    .hero > *:nth-child(1) { animation-delay: 0.05s; }
+    .hero > *:nth-child(2) { animation-delay: 0.10s; }
+    .hero > *:nth-child(3) { animation-delay: 0.15s; }
+    .hero > *:nth-child(4) { animation-delay: 0.20s; }
+    .hero > *:nth-child(5) { animation-delay: 0.25s; }
+    .hero > *:nth-child(6) { animation-delay: 0.30s; }
+
+    @media (max-width: 700px) {
+      .hero, .content { padding-left: 24px; padding-right: 24px; }
+      .comp-grid { grid-template-columns: 1fr; }
+      .value-band { grid-template-columns: 1fr; gap: 28px; }
+      .stats { flex-direction: column; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .footer { flex-direction: column; gap: 20px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="breadcrumb">Portfolio &rsaquo; <span>Payroll Automation Engine</span></div>
+
+  <div class="tag-row">
+    <div class="tag active">ABAP OO</div>
+    <div class="tag active">SAP HCM</div>
+    <div class="tag active">PNP / PNPCE</div>
+    <div class="tag active">ALV Grid</div>
+    <div class="tag">Payroll Clusters</div>
+    <div class="tag">CRM Integration</div>
+  </div>
+
+  <h1>Payroll Automation<br/><em>Engine</em></h1>
+
+  <p class="subtitle">
+    End-to-end payroll processing automation for ADP's multinational clients — eliminating manual execution steps and auto-uploading payroll documents to the CRM bank file system for seamless team access.
+  </p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">80%</div>
+      <div class="stat-label">Reduction in manual execution time</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">43</div>
+      <div class="stat-label">Country payroll cycles covered</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">~0</div>
+      <div class="stat-label">Human error rate post-automation</div>
+    </div>
+  </div>
+</header>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <!-- OBJECTIVE -->
+  <div class="section-label">01 &mdash; Objective</div>
+  <div class="objective-block">
+    <p>
+      Automate the complete end-to-end payroll processing cycle at ADP for multinational clients — replacing error-prone manual steps and auto-uploading payroll documents to the CRM bank file system for seamless, immediate team access.
+    </p>
+  </div>
+
+  <!-- PIPELINE -->
+  <div class="pipeline-section">
+    <div class="section-label">02 &mdash; Processing Pipeline</div>
+    <h2>End-to-End Execution Flow</h2>
+    <div class="pipeline-wrap">
+      <div class="pipeline">
+        <div class="pipe-stage">
+          <div class="pipe-box">
+            <div class="pipe-icon">🗄️</div>
+            <div class="pipe-name">HR Data Extract</div>
+            <div class="pipe-tech">PNP / PNPCE</div>
+          </div>
+        </div>
+        <div class="pipe-stage">
+          <div class="pipe-box">
+            <div class="pipe-icon">⚙️</div>
+            <div class="pipe-name">Schema Execution</div>
+            <div class="pipe-tech">Payroll Functions</div>
+          </div>
+        </div>
+        <div class="pipe-stage">
+          <div class="pipe-box">
+            <div class="pipe-icon">📦</div>
+            <div class="pipe-name">Cluster Export</div>
+            <div class="pipe-tech">Payroll Clusters</div>
+          </div>
+        </div>
+        <div class="pipe-stage">
+          <div class="pipe-box">
+            <div class="pipe-icon">📊</div>
+            <div class="pipe-name">ALV Output</div>
+            <div class="pipe-tech">ALV Grid</div>
+          </div>
+        </div>
+        <div class="pipe-stage">
+          <div class="pipe-box">
+            <div class="pipe-icon">☁️</div>
+            <div class="pipe-name">CRM Upload</div>
+            <div class="pipe-tech">File Transfer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPONENT BREAKDOWN -->
+  <div class="section-label">03 &mdash; Core Components</div>
+  <h2>Technical Architecture</h2>
+  <div class="comp-grid">
+    <div class="comp-cell">
+      <div class="comp-cell-num">Component 01</div>
+      <h3>ABAP OO Engine</h3>
+      <p>The automation core is built using object-oriented ABAP, encapsulating payroll logic into reusable classes. This approach ensures maintainability, testability, and clean separation of concerns across the processing layers.</p>
+      <span class="tech-chip">ABAP OO · Classes · Methods</span>
+    </div>
+    <div class="comp-cell">
+      <div class="comp-cell-num">Component 02</div>
+      <h3>PNP / PNPCE Logical Database</h3>
+      <p>Leverages SAP's PNP and PNPCE logical databases for optimised HR master data extraction — providing pre-joined access to infotypes, payroll results, and employee data without custom SQL overhead.</p>
+      <span class="tech-chip">PNP · PNPCE · Infotypes</span>
+    </div>
+    <div class="comp-cell">
+      <div class="comp-cell-num">Component 03</div>
+      <h3>Payroll Schema Integration</h3>
+      <p>Integrates with country-specific payroll schemas and functions, executing wage type processing, deductions, tax calculations, and net pay determinations across all 43 supported country configurations.</p>
+      <span class="tech-chip">Schemas · Functions · Wage Types</span>
+    </div>
+    <div class="comp-cell">
+      <div class="comp-cell-num">Component 04</div>
+      <h3>ALV Grid + File Transfer</h3>
+      <p>Generates structured ALV grid reports for in-system payroll review, then automatically packages and transfers final payroll documents to the CRM bank file system — eliminating the manual download-and-upload loop.</p>
+      <span class="tech-chip">ALV · File Transfer · CRM</span>
+    </div>
+  </div>
+
+  <!-- PROCESS STEPS -->
+  <div class="section-label">04 &mdash; Implementation Process</div>
+  <h2>Build Sequence</h2>
+  <div class="process-list">
+    <div class="process-item">
+      <div class="process-num">1</div>
+      <div class="process-body">
+        <h3>ABAP OO Architecture Design</h3>
+        <p>Designed the object-oriented class hierarchy for the payroll engine, defining interfaces for HR data extraction, schema execution, output generation, and file transfer as distinct, independently testable layers.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">2</div>
+      <div class="process-body">
+        <h3>PNP/PNPCE Data Extraction Layer</h3>
+        <p>Implemented the HR data extraction layer using PNP and PNPCE logical databases, configuring selection screens, infotype reads, and payroll result cluster access for each employee population.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">3</div>
+      <div class="process-body">
+        <h3>Payroll Schema & Cluster Integration</h3>
+        <p>Integrated country-specific payroll functions and schemas, mapping wage type tables and cluster data export for gross-to-net calculations across all 43 client country configurations.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">4</div>
+      <div class="process-body">
+        <h3>ALV Grid Report Implementation</h3>
+        <p>Built interactive ALV grid output for payroll result review, including field catalogues, sort options, subtotals, and exception highlighting — enabling pre-upload validation by payroll teams.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">5</div>
+      <div class="process-body">
+        <h3>Automated CRM File Upload</h3>
+        <p>Implemented automated file transfer to the CRM bank file system, replacing the manual download-upload workflow. Payroll documents are packaged, named, and deposited post-run without user intervention.</p>
+      </div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">6</div>
+      <div class="process-body">
+        <h3>Multi-Country Testing</h3>
+        <p>Tested the full pipeline across multiple country-specific payroll configurations, validating schema execution, tax logic, and output format compliance for each ADP client locale.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- COUNTRY SCOPE -->
+  <div class="section-label">05 &mdash; Scope</div>
+  <h2>Multi-Country Coverage</h2>
+  <div class="scope-row">
+    <div class="scope-label">Tested configurations include →</div>
+    <div class="scope-badge"><span class="dot"></span>United States</div>
+    <div class="scope-badge"><span class="dot"></span>United Kingdom</div>
+    <div class="scope-badge"><span class="dot"></span>Germany</div>
+    <div class="scope-badge"><span class="dot"></span>France</div>
+    <div class="scope-badge"><span class="dot"></span>Canada</div>
+    <div class="scope-badge"><span class="dot"></span>Australia</div>
+    <div class="scope-badge"><span class="dot"></span>+ 37 more</div>
+  </div>
+
+  <!-- TECH TABLE -->
+  <div class="section-label">06 &mdash; Technology Stack</div>
+  <table class="tech-table">
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Technology</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Language</td>
+        <td>ABAP Object-Oriented</td>
+        <td>Core automation engine and business logic</td>
+      </tr>
+      <tr>
+        <td>HR Platform</td>
+        <td>SAP HCM</td>
+        <td>Payroll master data and processing host</td>
+      </tr>
+      <tr>
+        <td>Data Extraction</td>
+        <td>PNP / PNPCE Logical DB</td>
+        <td>Optimised HR infotype and payroll result reads</td>
+      </tr>
+      <tr>
+        <td>Payroll Processing</td>
+        <td>Schemas, Functions, Clusters</td>
+        <td>Country-specific gross-to-net calculation</td>
+      </tr>
+      <tr>
+        <td>Reporting</td>
+        <td>ALV Grid</td>
+        <td>Interactive payroll result display and validation</td>
+      </tr>
+      <tr>
+        <td>Integration</td>
+        <td>CRM Bank File System</td>
+        <td>Automated document upload destination</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- VALUE PROPOSITION -->
+  <div class="section-label">07 &mdash; Value Proposition</div>
+  <div class="value-band">
+    <div class="value-item">
+      <div class="value-metric">80%</div>
+      <h3>Time Reduction</h3>
+      <p>Manual payroll execution time cut by 80%, freeing payroll specialists to focus on exception handling and compliance review rather than routine cycle execution.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-metric">~0%</div>
+      <h3>Human Error Rate</h3>
+      <p>Virtually eliminated processing errors across all 43 country cycles — removing transcription mistakes, missed steps, and incorrect file routing from the workflow entirely.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-metric">43+</div>
+      <h3>Countries Scalable</h3>
+      <p>Designed as a scalable automation blueprint — new country configurations can be onboarded without changes to the core engine, only country-specific schema parameters.</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-left">
+    <span>ABAP · SAP HCM</span> &mdash; Payroll Automation Engine &mdash; ADP Multinational
+  </div>
+  <a href="index.html" class="back-btn">← Portfolio</a>
+</footer>
+
+</body>
+</html>
