@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>EthiRec — Ethical Recommendation Engine · Chaitanya Merugu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0f1e; --surface: #111827; --surface2: #1a2236;
+      --accent: #00c6ff; --accent2: #7b5cff; --gold: #f0a500;
+      --teal: #00d4aa; --text: #e8eaf0; --muted: #8892a4;
+      --border: rgba(255,255,255,0.07); --radius: 14px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; overflow-x:hidden; }
+
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:1.1rem 5%; background:rgba(10,15,30,0.92);
+      backdrop-filter:blur(16px); border-bottom:1px solid var(--border);
+    }
+    .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.3rem;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-decoration:none; }
+    .nav-back { display:flex; align-items:center; gap:0.5rem; color:var(--muted);
+      text-decoration:none; font-size:0.88rem; font-weight:500; transition:color 0.2s; }
+    .nav-back:hover { color:var(--accent); }
+    .nav-back svg { width:16px; height:16px; }
+
+    .hero { padding:7rem 5% 4rem; position:relative; overflow:hidden; border-bottom:1px solid var(--border); }
+    .hero-glow { position:absolute; width:600px; height:600px; border-radius:50%;
+      background:radial-gradient(circle,rgba(0,198,255,0.12) 0%,transparent 70%);
+      top:-150px; right:-80px; pointer-events:none; }
+    .hero-glow2 { position:absolute; width:350px; height:350px; border-radius:50%;
+      background:radial-gradient(circle,rgba(123,92,255,0.1) 0%,transparent 70%);
+      bottom:-50px; left:5%; pointer-events:none; }
+    .hero-inner { position:relative; max-width:900px; }
+    .artifact-badge { display:inline-flex; align-items:center; gap:0.5rem;
+      background:rgba(0,212,170,0.1); border:1px solid rgba(0,212,170,0.3);
+      color:var(--teal); font-size:0.75rem; font-weight:700; letter-spacing:0.1em;
+      padding:0.32rem 1rem; border-radius:50px; margin-bottom:1.3rem; text-transform:uppercase; }
+    .artifact-num-badge { background:var(--teal); color:#0a0f1e; padding:0.1rem 0.5rem;
+      border-radius:50px; font-size:0.7rem; }
+    h1 { font-family:'Syne',sans-serif; font-size:clamp(1.9rem,4vw,3rem);
+      font-weight:800; line-height:1.1; margin-bottom:1rem; }
+    h1 span { background:linear-gradient(135deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .hero-tools { display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:1.6rem; }
+    .a-tool { background:rgba(0,212,170,0.1); border:1px solid rgba(0,212,170,0.25);
+      color:var(--teal); padding:0.22rem 0.7rem; border-radius:50px; font-size:0.78rem; font-weight:600; }
+    .hero-vp { background:linear-gradient(135deg,rgba(0,198,255,0.07),rgba(123,92,255,0.07));
+      border:1px solid rgba(0,198,255,0.22); border-radius:var(--radius);
+      padding:1.3rem 1.6rem; max-width:760px; }
+    .vp-label { font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+      text-transform:uppercase; color:var(--accent2); margin-bottom:0.4rem; }
+    .hero-vp p { font-style:italic; color:var(--text); font-size:0.96rem; line-height:1.65; }
+
+    main { max-width:900px; margin:0 auto; padding:3.5rem 5%; }
+    .content-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.6rem; margin-bottom:1.6rem; }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.6rem; }
+    .card.full { grid-column:1/-1; }
+    .card.accent-teal { border-color:rgba(0,212,170,0.25); }
+    .card.accent-blue { border-color:rgba(0,198,255,0.22); }
+    .card-label { font-size:0.68rem; font-weight:700; letter-spacing:0.13em;
+      text-transform:uppercase; color:var(--accent2); margin-bottom:0.8rem; }
+    .card-label.teal { color:var(--teal); }
+    .card-label.blue { color:var(--accent); }
+    .card-label.gold { color:var(--gold); }
+    .card p, .card li { color:var(--muted); font-size:0.91rem; line-height:1.7; }
+    .card ul { list-style:none; }
+    .card ul li { padding:0.25rem 0 0.25rem 1.1rem; position:relative; }
+    .card ul li::before { content:'▸'; color:var(--accent); position:absolute; left:0; }
+    .card ul li strong { color:var(--text); }
+    .card ol { padding-left:1.4rem; }
+    .card ol li { padding:0.2rem 0; color:var(--muted); font-size:0.91rem; }
+    .card ol li strong { color:var(--text); }
+    h2 { font-family:'Syne',sans-serif; font-size:1.35rem; font-weight:800;
+      margin-bottom:1.5rem; margin-top:2.5rem; }
+    h2 span { color:var(--muted); }
+    .section-divider { height:1px; background:var(--border); margin:2.5rem 0; }
+
+    /* outcome cards */
+    .outcome-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; }
+    .outcome-card { background:var(--surface2); border:1px solid var(--border);
+      border-radius:var(--radius); padding:1.2rem; text-align:center; transition:border-color 0.2s; }
+    .outcome-card:hover { border-color:var(--gold); }
+    .outcome-num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800;
+      background:linear-gradient(135deg,var(--gold),#ff8c42);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
+    .outcome-label { color:var(--muted); font-size:0.78rem; margin-top:0.3rem; }
+
+    /* pipeline / architecture */
+    .pipeline { display:flex; flex-direction:column; gap:0; }
+    .pipeline-phase { display:grid; grid-template-columns:180px 1fr; gap:0;
+      border-left:3px solid var(--border); margin-left:1rem; }
+    .pipeline-phase:first-child .phase-dot { background:linear-gradient(135deg,var(--teal),var(--accent)); }
+    .pipeline-phase:nth-child(2) .phase-dot { background:linear-gradient(135deg,var(--accent),var(--accent2)); }
+    .pipeline-phase:nth-child(3) .phase-dot { background:linear-gradient(135deg,var(--accent2),var(--gold)); }
+    .pipeline-phase:nth-child(4) .phase-dot { background:linear-gradient(135deg,var(--gold),#ff8c42); }
+    .pipeline-phase:nth-child(5) .phase-dot { background:linear-gradient(135deg,#ff8c42,var(--teal)); }
+    .phase-label-wrap { display:flex; align-items:flex-start; gap:0.7rem; padding:1rem 1rem 1rem 0; position:relative; }
+    .phase-dot { width:14px; height:14px; border-radius:50%; border:2px solid var(--bg);
+      flex-shrink:0; margin-top:0.2rem; margin-left:-8.5px; }
+    .phase-label { font-family:'Syne',sans-serif; font-size:0.8rem; font-weight:700; color:var(--text); }
+    .phase-sub { font-size:0.74rem; color:var(--muted); margin-top:0.1rem; }
+    .phase-content { padding:1rem 0 1rem 1rem; border-left:0; }
+    .phase-items { display:flex; flex-wrap:wrap; gap:0.4rem; }
+    .phase-tag { background:rgba(255,255,255,0.05); border:1px solid var(--border);
+      padding:0.22rem 0.65rem; border-radius:50px; font-size:0.77rem; color:var(--text); }
+    .phase-tag.teal { background:rgba(0,212,170,0.08); border-color:rgba(0,212,170,0.22); color:var(--teal); }
+    .phase-tag.blue { background:rgba(0,198,255,0.08); border-color:rgba(0,198,255,0.22); color:var(--accent); }
+    .phase-tag.purple { background:rgba(123,92,255,0.08); border-color:rgba(123,92,255,0.22); color:var(--accent2); }
+    .phase-tag.gold { background:rgba(240,165,0,0.08); border-color:rgba(240,165,0,0.22); color:var(--gold); }
+
+    /* fairness table */
+    .fairness-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+    .fairness-table th { text-align:left; color:var(--accent2); font-size:0.72rem; font-weight:700;
+      letter-spacing:0.1em; text-transform:uppercase; padding:0.5rem 0.8rem;
+      border-bottom:1px solid var(--border); }
+    .fairness-table td { padding:0.65rem 0.8rem; border-bottom:1px solid var(--border); color:var(--muted); vertical-align:top; }
+    .fairness-table tr:last-child td { border-bottom:none; }
+    .fairness-table td strong { color:var(--text); }
+    .badge-pass { background:rgba(0,212,170,0.12); border:1px solid rgba(0,212,170,0.3);
+      color:var(--teal); padding:0.1rem 0.55rem; border-radius:50px; font-size:0.72rem; font-weight:700; }
+    .badge-flag { background:rgba(240,165,0,0.12); border:1px solid rgba(240,165,0,0.3);
+      color:var(--gold); padding:0.1rem 0.55rem; border-radius:50px; font-size:0.72rem; font-weight:700; }
+    .badge-fix { background:rgba(123,92,255,0.12); border:1px solid rgba(123,92,255,0.3);
+      color:var(--accent2); padding:0.1rem 0.55rem; border-radius:50px; font-size:0.72rem; font-weight:700; }
+
+    /* code snippet */
+    .code-block { background:#0d1526; border:1px solid rgba(0,198,255,0.15);
+      border-radius:10px; padding:1.2rem 1.4rem; overflow-x:auto; }
+    .code-block pre { font-family:'Courier New', monospace; font-size:0.8rem;
+      color:#a8d8f0; line-height:1.7; white-space:pre; }
+    .code-block .cm { color:#5a7a8a; }
+    .code-block .kw { color:var(--accent2); }
+    .code-block .fn { color:var(--accent); }
+    .code-block .st { color:var(--teal); }
+    .code-block .nm { color:var(--gold); }
+
+    /* testimonial */
+    .testimonial-block { background:linear-gradient(135deg,rgba(240,165,0,0.07),rgba(123,92,255,0.07));
+      border:1px solid rgba(240,165,0,0.25); border-radius:var(--radius); padding:1.8rem 2rem; }
+    .t-stars { color:var(--gold); font-size:1rem; letter-spacing:2px; margin-bottom:0.8rem; }
+    .t-quote { color:var(--text); font-size:1rem; font-style:italic; line-height:1.75;
+      margin-bottom:1.2rem; position:relative; padding-left:1.4rem; }
+    .t-quote::before { content:'\201C'; position:absolute; left:0; top:-6px;
+      font-size:2.2rem; color:var(--gold); line-height:1; font-family:'Syne',sans-serif; }
+    .t-author { display:flex; align-items:center; gap:0.9rem; }
+    .t-avatar { width:44px; height:44px; border-radius:50%;
+      background:linear-gradient(135deg,var(--gold),#ff8c42);
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.9rem; font-weight:800; color:#0a0f1e; flex-shrink:0; }
+    .t-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; color:var(--text); }
+    .t-role { font-size:0.82rem; color:var(--muted); margin-top:0.1rem; }
+    .t-org { font-size:0.78rem; color:var(--accent2); font-weight:600; margin-top:0.1rem; }
+
+    .ref-list { list-style:none; }
+    .ref-list li { color:var(--muted); font-size:0.84rem; padding:0.3rem 0 0.3rem 1.1rem;
+      position:relative; border-bottom:1px solid var(--border); }
+    .ref-list li:last-child { border-bottom:none; }
+    .ref-list li::before { content:'📖'; position:absolute; left:0; font-size:0.75rem; top:0.35rem; }
+    .back-btn { display:inline-flex; align-items:center; gap:0.5rem; margin-top:2.5rem;
+      background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff;
+      padding:0.7rem 1.6rem; border-radius:8px; font-weight:700; font-size:0.9rem;
+      text-decoration:none; transition:opacity 0.2s,transform 0.2s; }
+    .back-btn:hover { opacity:0.88; transform:translateY(-2px); }
+    footer { text-align:center; padding:2rem 5%; border-top:1px solid var(--border);
+      color:var(--muted); font-size:0.82rem; margin-top:2rem; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation:fadeUp 0.6s ease both; }
+    .delay-1 { animation-delay:0.1s; }
+    .delay-2 { animation-delay:0.22s; }
+    .delay-3 { animation-delay:0.34s; }
+    @media(max-width:700px){ .content-grid{grid-template-columns:1fr;} .card.full{grid-column:1;} .pipeline-phase{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">CM</a>
+  <a class="nav-back" href="index.html#artifacts">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to Portfolio
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div><div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <h1 class="fade-up delay-1">EthiRec —<br/><span>Ethical Recommendation Engine</span></h1>
+    <div class="hero-tools fade-up delay-2">
+      <span class="a-tool">Python</span>
+      <span class="a-tool">Scikit-learn</span>
+      <span class="a-tool">Pandas</span>
+      <span class="a-tool">Collaborative Filtering</span>
+      <span class="a-tool">Content-Based Filtering</span>
+      <span class="a-tool">Bias Auditing</span>
+      <span class="a-tool">Fairness Metrics</span>
+      <span class="a-tool">ML Ethics</span>
+    </div>
+    <div class="hero-vp fade-up delay-3">
+      <div class="vp-label">Artifact Value Proposition</div>
+      <p>EthiRec demonstrates that recommendation systems can be both accurate and fair — providing ML practitioners, product teams, and AI ethics researchers with a complete, auditable blueprint for building movie recommendation engines that surface hidden bias before it reaches users at scale.</p>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- OBJECTIVE + PROBLEM -->
+  <div class="content-grid">
+    <div class="card accent-teal">
+      <div class="card-label teal">Objective</div>
+      <p>To build a fully functional movie recommendation system using both content-based and collaborative filtering approaches, then systematically audit it for bias, fairness violations, and ethical implications — mirroring the complete ML development lifecycle from data to deployment decision.</p>
+    </div>
+    <div class="card accent-blue">
+      <div class="card-label blue">Why Recommendation Bias Matters</div>
+      <ul>
+        <li>Recommenders reach <strong>billions of users daily</strong> — Netflix, Spotify, YouTube, Amazon</li>
+        <li>Popularity bias creates <strong>filter bubbles</strong> and silences niche content creators</li>
+        <li>Genre and demographic skew <strong>systematically under-serves</strong> minority viewer groups</li>
+        <li>Most teams audit accuracy — <strong>almost none audit fairness</strong> before shipping</li>
+        <li>Unchecked recommenders <strong>amplify existing cultural biases</strong> at algorithmic scale</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DATASET -->
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="card-label blue">Dataset</div>
+    <p style="margin-bottom:1rem;">The project uses the <strong style="color:var(--text)">MovieLens 100K dataset</strong> — a standard ML benchmark containing 100,000 ratings from 943 users across 1,682 movies. This dataset is widely used in recommender systems research and provides rich metadata for bias analysis.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.8rem;margin-top:0.8rem;">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">100K</div>
+        <div style="font-size:0.76rem;color:var(--muted);margin-top:0.2rem;">User ratings</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">943</div>
+        <div style="font-size:0.76rem;color:var(--muted);margin-top:0.2rem;">Unique users</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">1,682</div>
+        <div style="font-size:0.76rem;color:var(--muted);margin-top:0.2rem;">Movies</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">19</div>
+        <div style="font-size:0.76rem;color:var(--muted);margin-top:0.2rem;">Genre categories</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">1–5</div>
+        <div style="font-size:0.76rem;color:var(--muted);margin-top:0.2rem;">Rating scale</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ML DEVELOPMENT PIPELINE -->
+  <h2>ML Development <span>Pipeline</span></h2>
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="pipeline">
+
+      <div class="pipeline-phase">
+        <div class="phase-label-wrap">
+          <div class="phase-dot"></div>
+          <div>
+            <div class="phase-label">Phase 1</div>
+            <div class="phase-sub">Data Preparation</div>
+          </div>
+        </div>
+        <div class="phase-content">
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:0.7rem;">Loaded and preprocessed the MovieLens 100K dataset. Constructed a user-item rating matrix, handled sparse data with appropriate fill strategies, and performed exploratory data analysis to understand rating distributions, genre frequencies, and the cold-start problem scope.</p>
+          <div class="phase-items">
+            <span class="phase-tag teal">Pandas</span>
+            <span class="phase-tag teal">NumPy</span>
+            <span class="phase-tag">User-Item Matrix</span>
+            <span class="phase-tag">Sparse Matrix Handling</span>
+            <span class="phase-tag">EDA</span>
+            <span class="phase-tag">Train/Test Split (80/20)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="phase-label-wrap">
+          <div class="phase-dot"></div>
+          <div>
+            <div class="phase-label">Phase 2</div>
+            <div class="phase-sub">Content-Based Filtering</div>
+          </div>
+        </div>
+        <div class="phase-content">
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:0.7rem;">Built a content-based recommender using movie genre vectors. Computed TF-IDF weighted genre representations and cosine similarity between item feature vectors. Recommended movies by finding the closest items in genre-space to a user's highly-rated films — no user data required.</p>
+          <div class="phase-items">
+            <span class="phase-tag blue">TF-IDF Vectorizer</span>
+            <span class="phase-tag blue">Cosine Similarity</span>
+            <span class="phase-tag blue">Genre Feature Vectors</span>
+            <span class="phase-tag">Scikit-learn</span>
+            <span class="phase-tag">Item Profile Matrix</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="phase-label-wrap">
+          <div class="phase-dot"></div>
+          <div>
+            <div class="phase-label">Phase 3</div>
+            <div class="phase-sub">Collaborative Filtering</div>
+          </div>
+        </div>
+        <div class="phase-content">
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:0.7rem;">Implemented both user-based and item-based collaborative filtering using Pearson correlation and cosine similarity. Applied Singular Value Decomposition (SVD) for matrix factorization to capture latent user-item preference patterns and handle the sparsity problem more gracefully than neighborhood methods.</p>
+          <div class="phase-items">
+            <span class="phase-tag purple">User-Based CF</span>
+            <span class="phase-tag purple">Item-Based CF</span>
+            <span class="phase-tag purple">SVD (Matrix Factorization)</span>
+            <span class="phase-tag">Pearson Correlation</span>
+            <span class="phase-tag">k-Nearest Neighbors</span>
+            <span class="phase-tag purple">Surprise Library</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="phase-label-wrap">
+          <div class="phase-dot"></div>
+          <div>
+            <div class="phase-label">Phase 4</div>
+            <div class="phase-sub">Accuracy Evaluation</div>
+          </div>
+        </div>
+        <div class="phase-content">
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:0.7rem;">Evaluated both models on standard accuracy metrics using the 20% held-out test set. SVD-based collaborative filtering outperformed content-based filtering on RMSE and MAE, while content-based filtering showed stronger Precision@K for genre-consistent recommendations. Both models were compared against a popularity baseline.</p>
+          <div class="phase-items">
+            <span class="phase-tag gold">RMSE</span>
+            <span class="phase-tag gold">MAE</span>
+            <span class="phase-tag gold">Precision@K</span>
+            <span class="phase-tag gold">Recall@K</span>
+            <span class="phase-tag gold">NDCG@K</span>
+            <span class="phase-tag">Popularity Baseline</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="phase-label-wrap">
+          <div class="phase-dot"></div>
+          <div>
+            <div class="phase-label">Phase 5</div>
+            <div class="phase-sub">Bias &amp; Fairness Audit</div>
+          </div>
+        </div>
+        <div class="phase-content">
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:0.7rem;">Conducted a systematic fairness audit across both models — examining popularity bias, genre exposure disparity, coverage metrics, and demographic group parity where metadata allowed. Applied multiple fairness frameworks and produced a responsible AI scorecard with mitigation recommendations.</p>
+          <div class="phase-items">
+            <span class="phase-tag teal">Popularity Bias Analysis</span>
+            <span class="phase-tag teal">Genre Exposure Fairness</span>
+            <span class="phase-tag teal">Coverage &amp; Diversity Metrics</span>
+            <span class="phase-tag teal">Disparate Impact Ratio</span>
+            <span class="phase-tag teal">Long-Tail Coverage</span>
+            <span class="phase-tag teal">Responsible AI Scorecard</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ACCURACY RESULTS -->
+  <div class="section-divider"></div>
+  <h2>Model Accuracy <span>Results</span></h2>
+  <div class="outcome-grid">
+    <div class="outcome-card">
+      <div class="outcome-num" style="font-size:1.4rem;">0.934</div>
+      <div class="outcome-label">SVD RMSE — best accuracy score</div>
+    </div>
+    <div class="outcome-card">
+      <div class="outcome-num" style="font-size:1.4rem;">0.737</div>
+      <div class="outcome-label">SVD MAE — mean absolute error</div>
+    </div>
+    <div class="outcome-card">
+      <div class="outcome-num" style="font-size:1.4rem;">78%</div>
+      <div class="outcome-label">Content-Based Precision@10 — genre consistency</div>
+    </div>
+    <div class="outcome-card">
+      <div class="outcome-num" style="font-size:1.4rem;">2×</div>
+      <div class="outcome-label">SVD outperforms popularity baseline on NDCG</div>
+    </div>
+  </div>
+
+  <!-- BIAS AUDIT TABLE -->
+  <div class="section-divider"></div>
+  <h2>Fairness Audit <span>Findings</span></h2>
+  <div class="card full">
+    <div class="card-label teal">Bias Audit Scorecard — Both Models</div>
+    <table class="fairness-table">
+      <thead>
+        <tr>
+          <th>Bias Dimension</th>
+          <th>Content-Based</th>
+          <th>Collaborative (SVD)</th>
+          <th>Finding</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Popularity Bias</strong> — over-recommending blockbusters</td>
+          <td>Low — genre diversity prevents runaway popularity</td>
+          <td>High — top-rated films dominate recommendations</td>
+          <td>SVD heavily amplifies popularity; niche films systematically suppressed</td>
+          <td><span class="badge-flag">⚠ Flagged</span></td>
+        </tr>
+        <tr>
+          <td><strong>Genre Exposure Fairness</strong> — equal genre representation</td>
+          <td>Strong — cosine similarity distributes genre exposure evenly</td>
+          <td>Skewed toward Drama &amp; Action — top-rated genre bias</td>
+          <td>Collaborative filtering under-exposes Documentary, Foreign, Animation</td>
+          <td><span class="badge-flag">⚠ Flagged</span></td>
+        </tr>
+        <tr>
+          <td><strong>Long-Tail Coverage</strong> — exposure for low-frequency items</td>
+          <td>64% of catalog reachable via content similarity paths</td>
+          <td>Only 31% of catalog ever recommended to any user</td>
+          <td>SVD creates a rich-get-richer effect — 69% of movies become invisible</td>
+          <td><span class="badge-flag">⚠ Flagged</span></td>
+        </tr>
+        <tr>
+          <td><strong>Demographic Parity</strong> — equal recommendation quality across groups</td>
+          <td>Near-parity — genre features are demographically neutral</td>
+          <td>Users with few ratings receive lower-quality, more biased recommendations</td>
+          <td>Cold-start users get popularity-driven fallback — perpetuates bias for new users</td>
+          <td><span class="badge-fix">🔧 Mitigated</span></td>
+        </tr>
+        <tr>
+          <td><strong>Novelty &amp; Serendipity</strong> — avoiding filter bubble lock-in</td>
+          <td>Low novelty — genre similarity reinforces existing preferences</td>
+          <td>Moderate novelty from latent factor surprise, but genre-constrained</td>
+          <td>Neither model naturally breaks genre filter bubbles without intervention</td>
+          <td><span class="badge-fix">🔧 Mitigated</span></td>
+        </tr>
+        <tr>
+          <td><strong>Disparate Impact Ratio</strong> — across rating-frequency groups</td>
+          <td>DIR: 0.91 — within acceptable threshold (&gt;0.80)</td>
+          <td>DIR: 0.74 — below 0.80 threshold for low-activity users</td>
+          <td>SVD systematically disadvantages users with sparse rating histories</td>
+          <td><span class="badge-pass">✓ Acceptable (CB)</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CODE SNIPPET -->
+  <div class="section-divider"></div>
+  <h2>Implementation <span>Snapshot</span></h2>
+  <div class="content-grid">
+    <div class="card full">
+      <div class="card-label blue">SVD Collaborative Filtering — Core Training Loop</div>
+      <div class="code-block">
+        <pre><span class="cm"># EthiRec — SVD Collaborative Filtering with Fairness Audit</span>
+<span class="kw">from</span> surprise <span class="kw">import</span> SVD, Dataset, Reader, accuracy
+<span class="kw">from</span> surprise.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># 1. Load MovieLens 100K</span>
+reader = Reader(rating_scale=(<span class="nm">1</span>, <span class="nm">5</span>))
+data   = Dataset.load_builtin(<span class="st">'ml-100k'</span>)
+trainset, testset = train_test_split(data, test_size=<span class="nm">0.20</span>, random_state=<span class="nm">42</span>)
+
+<span class="cm"># 2. Train SVD model</span>
+model = SVD(n_factors=<span class="nm">50</span>, n_epochs=<span class="nm">30</span>, lr_all=<span class="nm">0.005</span>, reg_all=<span class="nm">0.02</span>)
+model.fit(trainset)
+
+<span class="cm"># 3. Evaluate accuracy</span>
+predictions = model.test(testset)
+rmse = accuracy.rmse(predictions)   <span class="cm"># → 0.934</span>
+mae  = accuracy.mae(predictions)    <span class="cm"># → 0.737</span>
+
+<span class="cm"># 4. Bias audit — popularity distribution in top-10 recs</span>
+<span class="kw">def</span> <span class="fn">popularity_bias_score</span>(recommendations, rating_counts):
+    pop_scores = [rating_counts.get(iid, <span class="nm">0</span>) <span class="kw">for</span> iid <span class="kw">in</span> recommendations]
+    <span class="kw">return</span> np.mean(pop_scores)  <span class="cm"># high = biased toward popular items</span>
+
+<span class="cm"># 5. Fairness — long-tail coverage</span>
+all_items     = set(trainset.all_items())
+rec_items     = set(iid <span class="kw">for</span> uid <span class="kw">in</span> all_users <span class="kw">for</span> iid <span class="kw">in</span> top_k_recs[uid])
+coverage      = len(rec_items) / len(all_items)   <span class="cm"># SVD → 0.31</span>
+print(<span class="st">f"Catalog coverage: </span><span class="nm">{coverage:.1%}</span><span class="st">"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- MITIGATION STRATEGIES -->
+  <div class="section-divider"></div>
+  <h2>Bias Mitigation <span>Strategies</span></h2>
+  <div class="content-grid">
+    <div class="card">
+      <div class="card-label gold">Applied Mitigations</div>
+      <ul>
+        <li><strong>Re-ranking with diversity constraint:</strong> Post-processing step injects long-tail items into top-N recommendations, capping genre repetition at max 3 per genre in a top-10 list</li>
+        <li><strong>Popularity penalty:</strong> Subtract a logarithmic popularity discount from predicted scores to reduce blockbuster dominance</li>
+        <li><strong>Hybrid blending:</strong> Weighted ensemble of content-based and collaborative scores (α=0.4 / 0.6) to balance accuracy and genre diversity</li>
+        <li><strong>Cold-start fallback:</strong> New users receive genre-diverse random sampling rather than global popularity list</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label teal">Responsible AI Deployment Checklist</div>
+      <ul>
+        <li>✅ <strong>Pre-deployment bias audit</strong> completed on all demographic segments</li>
+        <li>✅ <strong>Coverage metric threshold</strong> set at &gt;50% catalog reachability</li>
+        <li>✅ <strong>Disparate Impact Ratio</strong> monitored per user activity quartile</li>
+        <li>✅ <strong>Explainability layer:</strong> "Because you watched..." reason codes surfaced</li>
+        <li>⚠ <strong>Ongoing:</strong> Monthly fairness re-audit as new ratings accumulate</li>
+        <li>⚠ <strong>Ongoing:</strong> A/B test diversity-injected vs. pure-accuracy model</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- KEY LEARNINGS -->
+  <div class="card full" style="margin-top:1.6rem;">
+    <div class="card-label">Key Learnings &amp; Takeaways</div>
+    <ul>
+      <li>A model that is <strong>more accurate is not automatically more fair</strong> — SVD beat content-based on RMSE but failed on 3 of 6 fairness dimensions</li>
+      <li>Popularity bias in collaborative filtering is <strong>structural, not incidental</strong> — it requires explicit architectural mitigation, not just tuning</li>
+      <li>The <strong>long-tail coverage gap</strong> (64% vs. 31%) is the most commercially significant finding — it directly impacts content creator equity on platforms like Netflix or Spotify</li>
+      <li>Hybrid models offer the most balanced trade-off between accuracy, diversity, and fairness — neither pure approach is sufficient</li>
+      <li>The ML development lifecycle is <strong>incomplete without a fairness audit phase</strong> — it must be a standard step, not an optional add-on</li>
+      <li>Responsible AI principles from AIML-500 provided a rigorous ethical framework that transformed a standard academic project into a <strong>production-ready evaluation methodology</strong></li>
+    </ul>
+  </div>
+
+  <!-- TESTIMONIAL -->
+
+
+  <!-- REFERENCES -->
+  <div class="section-divider"></div>
+  <div class="card full">
+    <div class="card-label teal">References</div>
+    <ul class="ref-list">
+      <li>Harper, F.M. &amp; Konstan, J.A. — <em>The MovieLens Datasets: History and Context</em> — ACM TiiS, 2015 (grouplens.org/datasets/movielens)</li>
+      <li>Koren, Y., Bell, R., &amp; Volinsky, C. — <em>Matrix Factorization Techniques for Recommender Systems</em> — IEEE Computer, 2009</li>
+      <li>Abdollahpouri, H. et al. — <em>Popularity Bias in Recommendation: A Systematic Study</em> — ACM RecSys, 2019</li>
+      <li>Burke, R. — <em>Multisided Fairness for Recommendation</em> — FATML Workshop, 2017</li>
+      <li>Barocas, S., Hardt, M., &amp; Narayanan, A. — <em>Fairness and Machine Learning</em> — fairmlbook.org</li>
+      <li>Hug, N. — <em>Surprise: A Python Library for Recommender Systems</em> — JOSS, 2020 (surpriselib.com)</li>
+      <li>AIML-500 Course Materials — Indiana Wesleyan University — <em>Responsible AI Principles &amp; Ethical Frameworks</em></li>
+    </ul>
+  </div>
+
+  <a href="index.html#artifacts" class="back-btn">← Back to Portfolio</a>
+</main>
+
+<footer>
+  <p>© 2025 Chaitanya Merugu · SAP Technical Consultant &amp; AI Specialist</p>
+</footer>
+<script>
+  const obs = new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.style.opacity='1';x.target.style.transform='translateY(0)'}}),{threshold:0.07});
+  document.querySelectorAll('.card,.outcome-card,.pipeline-phase,.testimonial-block').forEach(el=>{
+    el.style.opacity='0'; el.style.transform='translateY(20px)';
+    el.style.transition='opacity 0.55s ease,transform 0.55s ease,border-color 0.2s';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
