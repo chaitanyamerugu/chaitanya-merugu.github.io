@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Artifact 03 — ECC to S/4HANA Migration Framework — Chaitanya Merugu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0f1e; --surface: #111827; --surface2: #1a2236;
+      --accent: #00c6ff; --accent2: #7b5cff; --gold: #f0a500;
+      --teal: #00d4aa; --text: #e8eaf0; --muted: #8892a4;
+      --border: rgba(255,255,255,0.07); --radius: 14px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; overflow-x:hidden; }
+
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:1.1rem 5%; background:rgba(10,15,30,0.92);
+      backdrop-filter:blur(16px); border-bottom:1px solid var(--border);
+    }
+    .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.3rem;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-decoration:none; }
+    .nav-back { display:flex; align-items:center; gap:0.5rem; color:var(--muted);
+      text-decoration:none; font-size:0.88rem; font-weight:500; transition:color 0.2s; }
+    .nav-back:hover { color:var(--accent); }
+    .nav-back svg { width:16px; height:16px; }
+
+    .hero {
+      padding: 7rem 5% 4rem; position:relative; overflow:hidden;
+      border-bottom:1px solid var(--border);
+    }
+    .hero-glow { position:absolute; width:600px; height:600px; border-radius:50%;
+      background:radial-gradient(circle,rgba(0,198,255,0.12) 0%,transparent 70%);
+      top:-150px; right:-80px; pointer-events:none; }
+    .hero-glow2 { position:absolute; width:350px; height:350px; border-radius:50%;
+      background:radial-gradient(circle,rgba(123,92,255,0.1) 0%,transparent 70%);
+      bottom:-50px; left:5%; pointer-events:none; }
+    .hero-inner { position:relative; max-width:900px; }
+    .artifact-badge { display:inline-flex; align-items:center; gap:0.5rem;
+      background:rgba(0,212,170,0.1); border:1px solid rgba(0,212,170,0.3);
+      color:var(--teal); font-size:0.75rem; font-weight:700; letter-spacing:0.1em;
+      padding:0.32rem 1rem; border-radius:50px; margin-bottom:1.3rem; text-transform:uppercase; }
+    .artifact-num-badge { background:var(--teal); color:#0a0f1e; padding:0.1rem 0.5rem;
+      border-radius:50px; font-size:0.7rem; }
+    h1 { font-family:'Syne',sans-serif; font-size:clamp(1.9rem,4vw,3rem);
+      font-weight:800; line-height:1.1; margin-bottom:1rem; }
+    h1 span { background:linear-gradient(135deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .hero-tools { display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:1.6rem; }
+    .a-tool { background:rgba(0,212,170,0.1); border:1px solid rgba(0,212,170,0.25);
+      color:var(--teal); padding:0.22rem 0.7rem; border-radius:50px; font-size:0.78rem; font-weight:600; }
+    .hero-vp { background:linear-gradient(135deg,rgba(0,198,255,0.07),rgba(123,92,255,0.07));
+      border:1px solid rgba(0,198,255,0.22); border-radius:var(--radius);
+      padding:1.3rem 1.6rem; max-width:760px; }
+    .vp-label { font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+      text-transform:uppercase; color:var(--accent2); margin-bottom:0.4rem; }
+    .hero-vp p { font-style:italic; color:var(--text); font-size:0.96rem; line-height:1.65; }
+
+    main { max-width:900px; margin:0 auto; padding:3.5rem 5%; }
+    .content-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.6rem; margin-bottom:1.6rem; }
+    .card { background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); padding:1.6rem; }
+    .card.full { grid-column:1/-1; }
+    .card.accent-teal { border-color:rgba(0,212,170,0.25); }
+    .card.accent-blue { border-color:rgba(0,198,255,0.22); }
+    .card-label { font-size:0.68rem; font-weight:700; letter-spacing:0.13em;
+      text-transform:uppercase; color:var(--accent2); margin-bottom:0.8rem; }
+    .card-label.teal { color:var(--teal); }
+    .card-label.blue { color:var(--accent); }
+    .card p, .card li { color:var(--muted); font-size:0.91rem; line-height:1.7; }
+    .card ul { list-style:none; }
+    .card ul li { padding:0.25rem 0 0.25rem 1.1rem; position:relative; }
+    .card ul li::before { content:'▸'; color:var(--accent); position:absolute; left:0; }
+    .card ul li strong { color:var(--text); }
+    .card ol { padding-left:1.4rem; }
+    .card ol li { padding:0.2rem 0; }
+    h2 { font-family:'Syne',sans-serif; font-size:1.35rem; font-weight:800;
+      margin-bottom:1.5rem; margin-top:2.5rem; }
+    h2 span { color:var(--muted); }
+    .section-divider { height:1px; background:var(--border); margin:2.5rem 0; }
+    .outcome-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; }
+    .outcome-card { background:var(--surface2); border:1px solid var(--border);
+      border-radius:var(--radius); padding:1.2rem; text-align:center;
+      transition:border-color 0.2s; }
+    .outcome-card:hover { border-color:var(--gold); }
+    .outcome-num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800;
+      background:linear-gradient(135deg,var(--gold),#ff8c42);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
+    .outcome-label { color:var(--muted); font-size:0.78rem; margin-top:0.3rem; }
+    .arch-diagram { background:var(--surface2); border:1px solid rgba(0,198,255,0.18);
+      border-radius:var(--radius); padding:1.6rem; margin-top:1rem; }
+    .arch-row { display:flex; align-items:center; gap:0.8rem; margin-bottom:0.7rem;
+      flex-wrap:wrap; }
+    .arch-row:last-child { margin-bottom:0; }
+    .arch-box { background:rgba(0,198,255,0.08); border:1px solid rgba(0,198,255,0.22);
+      color:var(--accent); font-size:0.78rem; font-weight:700; padding:0.35rem 0.85rem;
+      border-radius:8px; white-space:nowrap; }
+    .arch-box.teal { background:rgba(0,212,170,0.08); border-color:rgba(0,212,170,0.25); color:var(--teal); }
+    .arch-box.purple { background:rgba(123,92,255,0.1); border-color:rgba(123,92,255,0.28); color:var(--accent2); }
+    .arch-arrow { color:var(--muted); font-size:1rem; }
+    .ref-list { list-style:none; }
+    .ref-list li { color:var(--muted); font-size:0.84rem; padding:0.3rem 0 0.3rem 1.1rem;
+      position:relative; border-bottom:1px solid var(--border); }
+    .ref-list li:last-child { border-bottom:none; }
+    .ref-list li::before { content:'📖'; position:absolute; left:0; font-size:0.75rem; top:0.35rem; }
+    .back-btn { display:inline-flex; align-items:center; gap:0.5rem; margin-top:2.5rem;
+      background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff;
+      padding:0.7rem 1.6rem; border-radius:8px; font-weight:700; font-size:0.9rem;
+      text-decoration:none; transition:opacity 0.2s,transform 0.2s; }
+    .back-btn:hover { opacity:0.88; transform:translateY(-2px); }
+    footer { text-align:center; padding:2rem 5%; border-top:1px solid var(--border);
+      color:var(--muted); font-size:0.82rem; margin-top:2rem; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation:fadeUp 0.6s ease both; }
+    .delay-1 { animation-delay:0.1s; }
+    .delay-2 { animation-delay:0.22s; }
+    .delay-3 { animation-delay:0.34s; }
+    @media(max-width:700px){ .content-grid{grid-template-columns:1fr;} .card.full{grid-column:1;} }
+
+    /* ── TESTIMONIAL ── */
+    .testimonial-section { margin-top: 0; }
+    .testimonial-block { background: linear-gradient(135deg, rgba(240,165,0,0.07), rgba(123,92,255,0.07));
+      border: 1px solid rgba(240,165,0,0.25); border-radius: var(--radius); padding: 1.8rem 2rem; }
+    .t-stars { color: var(--gold); font-size: 1rem; letter-spacing: 2px; margin-bottom: 0.8rem; }
+    .t-quote { color: var(--text); font-size: 1rem; font-style: italic; line-height: 1.75;
+      margin-bottom: 1.2rem; position: relative; padding-left: 1.4rem; }
+    .t-quote::before { content: '\201C'; position: absolute; left: 0; top: -6px;
+      font-size: 2.2rem; color: var(--gold); line-height: 1; font-family: 'Syne', sans-serif; }
+    .t-author { display: flex; align-items: center; gap: 0.9rem; }
+    .t-avatar { width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #ff8c42);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; font-weight: 800; color: #0a0f1e; flex-shrink: 0; }
+    .t-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--text); }
+    .t-role { font-size: 0.82rem; color: var(--muted); margin-top: 0.1rem; }
+    .t-org { font-size: 0.78rem; color: var(--accent2); font-weight: 600; margin-top: 0.1rem; }
+
+  </style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">CM</a>
+  <a class="nav-back" href="index.html#artifacts">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to Portfolio
+  </a>
+</nav>
+
+<div class="hero">
+  <div class="hero-glow"></div><div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <h1 class="fade-up delay-1">ECC to S/4HANA Migration:<br/><span>Technical Remediation Framework</span></h1>
+    <div class="hero-tools fade-up delay-2">
+      <span class="a-tool">S/4HANA Private Cloud</span><span class="a-tool">ABAP</span>
+      <span class="a-tool">SPDD / SPAU</span><span class="a-tool">RAP</span>
+      <span class="a-tool">AWS</span><span class="a-tool">Custom Code Analysis</span>
+    </div>
+    <div class="hero-vp fade-up delay-3">
+      <div class="vp-label">Artifact Value Proposition</div>
+      <p>This framework provides a repeatable technical remediation approach for ECC-to-S/4HANA cloud migrations — enabling enterprise teams to modernize legacy landscapes with minimal risk and maximum continuity of critical HR and Finance operations.</p>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="content-grid">
+    <div class="card accent-teal">
+      <div class="card-label teal">Objective</div>
+      <p>To systematically identify, remediate, and validate custom ABAP objects during Pennsylvania's ECC to S/4HANA Private Cloud (AWS-hosted) migration, ensuring zero disruption to critical HR and Finance operations across state-wide systems.</p>
+    </div>
+    <div class="card accent-blue">
+      <div class="card-label blue">Migration Risks Addressed</div>
+      <ul>
+        <li>Custom code using <strong>deprecated APIs</strong> incompatible with S/4HANA</li>
+        <li>Dictionary object conflicts during SPDD/SPAU adjustment</li>
+        <li>Modified SAP standard objects overwritten by upgrade</li>
+        <li>RAP compatibility gaps in existing ABAP reports</li>
+        <li>Environment deployment sequencing errors (Dev→QA→Prod)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="card-label">Remediation Framework — Phases</div>
+    <ol>
+      <li><strong>Custom Code Analysis:</strong> Used SAP Custom Code Migration Worklist to scan all Z/Y objects. Categorized findings by severity — blocking, non-blocking, and informational.</li>
+      <li><strong>SPDD Adjustment:</strong> Performed Dictionary object adjustment (SPDD) to handle structural conflicts between SAP standard table/structure changes and client modifications.</li>
+      <li><strong>SPAU Adjustment:</strong> Executed Repository object adjustment (SPAU) to re-apply client modifications to upgraded standard ABAP programs, function modules, and includes.</li>
+      <li><strong>Deprecated API Remediation:</strong> Replaced obsolete function modules, BAPIs, and database table accesses with their S/4HANA-compatible equivalents (e.g., MATMAS → Product APIs).</li>
+      <li><strong>RAP Readiness Validation:</strong> Assessed and adapted custom CDS views and OData services for RESTful ABAP Programming Model compliance in the new environment.</li>
+      <li><strong>Basis Team Collaboration:</strong> Coordinated transport sequencing across Development, QA, and Production environments with the Basis team to ensure conflict-free deployment.</li>
+      <li><strong>Post-Migration Validation:</strong> Executed functional regression testing for all HR and Finance modules, verifying payroll runs, leave processing, and financial postings in S/4HANA.</li>
+    </ol>
+  </div>
+
+  <h2>Migration <span>Architecture</span></h2>
+  <div class="arch-diagram">
+    <div class="arch-row">
+      <div class="arch-box teal">ECC On-Premise</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-box">Custom Code Scan</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-box purple">SPDD / SPAU Analysis</div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-box purple">API Remediation</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-box">RAP Readiness Check</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-box teal">Dev → QA → Production</div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-box teal">S/4HANA Private Cloud</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-box">AWS-Hosted Infrastructure</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-box purple">Post-Migration Validation</div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h2>Measurable <span>Outcomes</span></h2>
+  <div class="outcome-grid">
+    <div class="outcome-card"><div class="outcome-num">0</div><div class="outcome-label">Disruptions to critical HR &amp; Finance operations</div></div>
+    <div class="outcome-card"><div class="outcome-num">100%</div><div class="outcome-label">Custom objects remediated pre-cutover</div></div>
+    <div class="outcome-card"><div class="outcome-num">3-env</div><div class="outcome-label">Validated across Dev, QA, and Production</div></div>
+    <div class="outcome-card"><div class="outcome-num">✓</div><div class="outcome-label">Repeatable framework for future migrations</div></div>
+  </div>
+
+  <div class="section-divider"></div>
+  <div class="content-grid">
+    <div class="card">
+      <div class="card-label">Tools &amp; Technologies</div>
+      <ul>
+        <li><strong>SAP S/4HANA Private Cloud</strong> — AWS-hosted target system</li>
+        <li><strong>SPDD</strong> — Dictionary object conflict adjustment</li>
+        <li><strong>SPAU</strong> — Repository object modification adjustment</li>
+        <li><strong>ABAP</strong> — Custom object remediation &amp; rewrite</li>
+        <li><strong>RAP</strong> — RESTful ABAP model compliance validation</li>
+        <li><strong>SAP Custom Code Migration App</strong> — Analysis worklist</li>
+        <li><strong>SAP Basis Tooling</strong> — Transport management</li>
+        <li><strong>AWS</strong> — Cloud infrastructure for S/4HANA host</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Key Learnings &amp; Takeaways</div>
+      <ul>
+        <li>SPDD must be completed <strong>before SPAU</strong> — dictionary objects underpin repository objects</li>
+        <li>Systematic severity categorization of custom code findings prevents last-minute blocking issues</li>
+        <li>RAP readiness is <strong>non-negotiable</strong> for any custom development surviving into S/4HANA Cloud</li>
+        <li>A documented remediation framework is reusable across modules and future system upgrades</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card full" style="margin-top:1.6rem;">
+    <div class="card-label teal">References</div>
+    <ul class="ref-list">
+      <li>SAP S/4HANA Migration Guide — Custom Code Adaptation — <em>help.sap.com/docs/S4HANA_MIGRATION</em></li>
+      <li>SAP Note 2185390 — SPDD/SPAU Procedure During Upgrades — <em>support.sap.com</em></li>
+      <li>SAP Custom Code Migration App — SAP BTP — <em>help.sap.com/docs/custom-code-migration</em></li>
+      <li>RESTful ABAP Programming Model (RAP) — <em>help.sap.com/docs/abap-cloud/abap-rap</em></li>
+      <li>SAP on AWS Architecture Guide — <em>aws.amazon.com/sap</em></li>
+    </ul>
+  </div>
+
+  <div class="section-divider"></div>
+  <h2>Peer <span>Testimonial</span></h2>
+  <div class="testimonial-block">
+    <div class="t-stars">★★★★★</div>
+    <div class="t-quote">ECC-to-S/4HANA migrations are notoriously risky — especially with the volume of custom ABAP we had accumulated over a decade. Chaitanya's remediation framework gave us a systematic, repeatable process that took the guesswork out of every deployment decision. We went live on S/4HANA Private Cloud with zero disruption to HR or Finance. That's not common on a migration of this scale. That's exceptional. I've worked with many consultants on migration projects — few bring both the technical depth and the structured discipline this framework demonstrates.</div>
+    <div class="t-author">
+      <div class="t-avatar">DT</div>
+      <div>
+        <div class="t-name">David Torres</div>
+        <div class="t-role">Enterprise Architect</div>
+        <div class="t-org">Commonwealth of Pennsylvania — IESO</div>
+      </div>
+    </div>
+  </div>
+
+  <a href="index.html#artifacts" class="back-btn">← Back to Portfolio</a>
+</main>
+
+<footer>
+  <p>© 2025 Chaitanya Merugu · SAP Technical Consultant &amp; AI Specialist</p>
+</footer>
+<script>
+  const obs = new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.style.opacity='1';x.target.style.transform='translateY(0)'}}),{threshold:0.07});
+  document.querySelectorAll('.card,.outcome-card').forEach(el=>{
+    el.style.opacity='0';el.style.transform='translateY(20px)';
+    el.style.transition='opacity 0.55s ease,transform 0.55s ease,border-color 0.2s';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
