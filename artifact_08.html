@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Artifact 08 — AI/ML Portfolio Curation &amp; Audience Adaptation · Chaitanya Merugu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0f1e; --surface: #111827; --surface2: #1a2236;
+      --accent: #00c6ff; --accent2: #7b5cff; --gold: #f0a500;
+      --teal: #00d4aa; --text: #e8eaf0; --muted: #8892a4;
+      --border: rgba(255,255,255,0.07); --radius: 14px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; overflow-x:hidden; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:1.1rem 5%; background:rgba(10,15,30,0.92); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
+    .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.3rem; background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-decoration:none; }
+    .nav-back { display:flex; align-items:center; gap:0.5rem; color:var(--muted); text-decoration:none; font-size:0.88rem; font-weight:500; transition:color 0.2s; }
+    .nav-back:hover { color:var(--accent); }
+    .nav-back svg { width:16px; height:16px; }
+    .hero { padding:7rem 5% 4rem; position:relative; overflow:hidden; border-bottom:1px solid var(--border); }
+    .hero-glow { position:absolute; width:600px; height:600px; border-radius:50%; background:radial-gradient(circle,rgba(0,198,255,0.12) 0%,transparent 70%); top:-150px; right:-80px; pointer-events:none; }
+    .hero-glow2 { position:absolute; width:350px; height:350px; border-radius:50%; background:radial-gradient(circle,rgba(123,92,255,0.1) 0%,transparent 70%); bottom:-50px; left:5%; pointer-events:none; }
+    .hero-inner { position:relative; max-width:900px; }
+    .artifact-badge { display:inline-flex; align-items:center; gap:0.5rem; background:rgba(0,212,170,0.1); border:1px solid rgba(0,212,170,0.3); color:var(--teal); font-size:0.75rem; font-weight:700; letter-spacing:0.1em; padding:0.32rem 1rem; border-radius:50px; margin-bottom:1.3rem; text-transform:uppercase; }
+    .artifact-num-badge { background:var(--teal); color:#0a0f1e; padding:0.1rem 0.5rem; border-radius:50px; font-size:0.7rem; }
+    h1 { font-family:'Syne',sans-serif; font-size:clamp(1.9rem,4vw,3rem); font-weight:800; line-height:1.1; margin-bottom:1rem; }
+    h1 span { background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .hero-tools { display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:1.6rem; }
+    .a-tool { background:rgba(0,212,170,0.1); border:1px solid rgba(0,212,170,0.25); color:var(--teal); padding:0.22rem 0.7rem; border-radius:50px; font-size:0.78rem; font-weight:600; }
+    .hero-vp { background:linear-gradient(135deg,rgba(0,198,255,0.07),rgba(123,92,255,0.07)); border:1px solid rgba(0,198,255,0.22); border-radius:var(--radius); padding:1.3rem 1.6rem; max-width:760px; }
+    .vp-label { font-size:0.68rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.4rem; }
+    .hero-vp p { font-style:italic; color:var(--text); font-size:0.96rem; line-height:1.65; }
+    main { max-width:900px; margin:0 auto; padding:3.5rem 5%; }
+    .content-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.6rem; margin-bottom:1.6rem; }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.6rem; }
+    .card.full { grid-column:1/-1; }
+    .card.accent-teal { border-color:rgba(0,212,170,0.25); }
+    .card.accent-blue { border-color:rgba(0,198,255,0.22); }
+    .card-label { font-size:0.68rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.8rem; }
+    .card-label.teal { color:var(--teal); }
+    .card-label.blue { color:var(--accent); }
+    .card-label.gold { color:var(--gold); }
+    .card p, .card li { color:var(--muted); font-size:0.91rem; line-height:1.7; }
+    .card ul { list-style:none; }
+    .card ul li { padding:0.25rem 0 0.25rem 1.1rem; position:relative; }
+    .card ul li::before { content:'▸'; color:var(--accent); position:absolute; left:0; }
+    .card ul li strong { color:var(--text); }
+    .card ol { padding-left:1.4rem; }
+    .card ol li { padding:0.2rem 0; color:var(--muted); font-size:0.91rem; }
+    .card ol li strong { color:var(--text); }
+    h2 { font-family:'Syne',sans-serif; font-size:1.35rem; font-weight:800; margin-bottom:1.5rem; margin-top:2.5rem; }
+    h2 span { color:var(--muted); }
+    .section-divider { height:1px; background:var(--border); margin:2.5rem 0; }
+    .outcome-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; }
+    .outcome-card { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem; text-align:center; transition:border-color 0.2s; }
+    .outcome-card:hover { border-color:var(--gold); }
+    .outcome-num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; background:linear-gradient(135deg,var(--gold),#ff8c42); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
+    .outcome-label { color:var(--muted); font-size:0.78rem; margin-top:0.3rem; }
+
+    /* EVALUATION MATRIX TABLE */
+    .eval-table { width:100%; border-collapse:collapse; font-size:0.84rem; }
+    .eval-table th { text-align:left; color:var(--accent2); font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.6rem 0.9rem; border-bottom:2px solid rgba(123,92,255,0.25); }
+    .eval-table td { padding:0.7rem 0.9rem; border-bottom:1px solid var(--border); color:var(--muted); vertical-align:top; }
+    .eval-table tr:last-child td { border-bottom:none; }
+    .eval-table td:first-child { color:var(--text); font-weight:600; font-size:0.85rem; }
+    .eval-table tr:hover td { background:rgba(255,255,255,0.02); }
+    .badge-sel { background:rgba(0,212,170,0.12); border:1px solid rgba(0,212,170,0.3); color:var(--teal); padding:0.12rem 0.6rem; border-radius:50px; font-size:0.71rem; font-weight:700; white-space:nowrap; }
+    .badge-high { background:rgba(0,198,255,0.1); border:1px solid rgba(0,198,255,0.25); color:var(--accent); padding:0.12rem 0.6rem; border-radius:50px; font-size:0.71rem; font-weight:700; white-space:nowrap; }
+    .badge-med { background:rgba(240,165,0,0.1); border:1px solid rgba(240,165,0,0.25); color:var(--gold); padding:0.12rem 0.6rem; border-radius:50px; font-size:0.71rem; font-weight:700; white-space:nowrap; }
+
+    /* AUDIENCE ADAPTATION CARDS */
+    .audience-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.2rem; }
+    .audience-card { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:1.4rem; transition:border-color 0.2s,transform 0.2s; }
+    .audience-card:hover { transform:translateY(-3px); }
+    .audience-card.recruiter { border-color:rgba(0,198,255,0.22); }
+    .audience-card.recruiter .aud-icon { color:var(--accent); }
+    .audience-card.architect { border-color:rgba(123,92,255,0.22); }
+    .audience-card.architect .aud-icon { color:var(--accent2); }
+    .audience-card.faculty { border-color:rgba(0,212,170,0.22); }
+    .audience-card.faculty .aud-icon { color:var(--teal); }
+    .audience-card.org { border-color:rgba(240,165,0,0.22); }
+    .audience-card.org .aud-icon { color:var(--gold); }
+    .aud-icon { font-size:1.4rem; margin-bottom:0.6rem; }
+    .aud-title { font-family:'Syne',sans-serif; font-size:0.92rem; font-weight:700; color:var(--text); margin-bottom:0.5rem; }
+    .aud-need { font-size:0.78rem; color:var(--muted); margin-bottom:0.6rem; font-style:italic; }
+    .aud-adapt { list-style:none; }
+    .aud-adapt li { font-size:0.82rem; color:var(--muted); padding:0.2rem 0 0.2rem 1rem; position:relative; }
+    .aud-adapt li::before { content:'→'; color:var(--accent); position:absolute; left:0; font-size:0.75rem; }
+    .aud-adapt li strong { color:var(--text); }
+
+    /* CRITERIA FRAMEWORK */
+    .criteria-row { display:grid; grid-template-columns:auto 1fr; gap:1rem; align-items:start; padding:0.9rem 0; border-bottom:1px solid var(--border); }
+    .criteria-row:last-child { border-bottom:none; }
+    .criteria-num { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; min-width:2rem; }
+    .criteria-label { font-family:'Syne',sans-serif; font-size:0.88rem; font-weight:700; color:var(--text); margin-bottom:0.3rem; }
+    .criteria-desc { font-size:0.84rem; color:var(--muted); line-height:1.6; }
+
+    /* TESTIMONIAL */
+    .testimonial-block { background:linear-gradient(135deg,rgba(240,165,0,0.07),rgba(123,92,255,0.07)); border:1px solid rgba(240,165,0,0.25); border-radius:var(--radius); padding:1.8rem 2rem; }
+    .t-stars { color:var(--gold); font-size:1rem; letter-spacing:2px; margin-bottom:0.8rem; }
+    .t-quote { color:var(--text); font-size:1rem; font-style:italic; line-height:1.75; margin-bottom:1.2rem; position:relative; padding-left:1.4rem; }
+    .t-quote::before { content:'\201C'; position:absolute; left:0; top:-6px; font-size:2.2rem; color:var(--gold); line-height:1; font-family:'Syne',sans-serif; }
+    .t-author { display:flex; align-items:center; gap:0.9rem; }
+    .t-avatar { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--gold),#ff8c42); display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:800; color:#0a0f1e; flex-shrink:0; }
+    .t-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; color:var(--text); }
+    .t-role { font-size:0.82rem; color:var(--muted); margin-top:0.1rem; }
+    .t-org { font-size:0.78rem; color:var(--accent2); font-weight:600; margin-top:0.1rem; }
+
+    .ref-list { list-style:none; }
+    .ref-list li { color:var(--muted); font-size:0.84rem; padding:0.3rem 0 0.3rem 1.1rem; position:relative; border-bottom:1px solid var(--border); }
+    .ref-list li:last-child { border-bottom:none; }
+    .ref-list li::before { content:'📖'; position:absolute; left:0; font-size:0.75rem; top:0.35rem; }
+    .back-btn { display:inline-flex; align-items:center; gap:0.5rem; margin-top:2.5rem; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; padding:0.7rem 1.6rem; border-radius:8px; font-weight:700; font-size:0.9rem; text-decoration:none; transition:opacity 0.2s,transform 0.2s; }
+    .back-btn:hover { opacity:0.88; transform:translateY(-2px); }
+    footer { text-align:center; padding:2rem 5%; border-top:1px solid var(--border); color:var(--muted); font-size:0.82rem; margin-top:2rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation:fadeUp 0.6s ease both; }
+    .delay-1 { animation-delay:0.1s; }
+    .delay-2 { animation-delay:0.22s; }
+    .delay-3 { animation-delay:0.34s; }
+    @media(max-width:700px) { .content-grid{grid-template-columns:1fr;} .card.full{grid-column:1;} .audience-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">CM</a>
+  <a class="nav-back" href="index.html#artifacts">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to Portfolio
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div><div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="artifact-badge fade-up">
+      <span class="artifact-num-badge">04</span> AIML-500 · Workshop 4
+    </div>
+    <h1 class="fade-up delay-1">AI/ML Portfolio Curation &amp;<br/><span>Audience Adaptation Framework</span></h1>
+    <div class="hero-tools fade-up delay-2">
+      <span class="a-tool">Critical Evaluation</span>
+      <span class="a-tool">Audience Analysis</span>
+      <span class="a-tool">AI/ML Competency Mapping</span>
+      <span class="a-tool">Portfolio Strategy</span>
+      <span class="a-tool">Value Proposition Design</span>
+      <span class="a-tool">Professional Communication</span>
+    </div>
+    <div class="hero-vp fade-up delay-3">
+      <div class="vp-label">Artifact Value Proposition</div>
+      <p>This framework gives AI/ML professionals and students a systematic, repeatable method for evaluating which work best represents their competencies — and then adapting how that work is presented to maximize relevance for recruiters, enterprise architects, faculty, and organizations with distinct needs and decision criteria.</p>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- OBJECTIVE + LEARNING OUTCOMES -->
+  <div class="content-grid">
+    <div class="card accent-teal">
+      <div class="card-label teal">Objective</div>
+      <p>To critically evaluate a body of AI/ML work and apply a structured selection framework — identifying which artifacts best represent real professional competencies — then systematically adapt the presentation of each artifact for four distinct professional audiences with different decision-making priorities.</p>
+    </div>
+    <div class="card accent-blue">
+      <div class="card-label blue">Workshop 4 Learning Outcomes Demonstrated</div>
+      <ul>
+        <li><strong>Critically evaluate and select artifacts</strong> that best represent AI/ML competencies — using a scored, multi-criteria evaluation matrix applied across all portfolio candidates</li>
+        <li><strong>Customize portfolio artifacts for different audiences</strong> — producing four audience-specific adaptations of the same core work, each tailored to what that audience actually needs to see</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- WHY THIS MATTERS -->
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="card-label blue">Introduction — Why Curation and Adaptation Matter</div>
+    <p style="margin-bottom:0.9rem;">In a competitive AI/ML landscape, having strong work is necessary but not sufficient. The ability to <strong style="color:var(--text)">critically evaluate what to show</strong> and <strong style="color:var(--text)">how to show it</strong> is itself a professional competency — one that distinguishes candidates who understand their audience from those who simply dump everything they've ever built into a folder.</p>
+    <p style="margin-bottom:0.9rem;">As someone with 5+ years of enterprise SAP experience now expanding into AI/ML, I face a specific curation challenge: I have deep technical work across two domains — SAP cloud engineering and emerging AI/ML — and my audiences have radically different literacy levels and success criteria for each.</p>
+    <p>This artifact documents the systematic process I used to select, prioritize, and adapt my AIML-500 portfolio work — making the curation decision itself a demonstration of the competency it produces.</p>
+  </div>
+
+  <!-- EVALUATION CRITERIA FRAMEWORK -->
+  <h2>Step 1: Evaluation <span>Criteria Framework</span></h2>
+  <p style="color:var(--muted);font-size:0.92rem;margin-bottom:1.4rem;max-width:700px;">Before selecting artifacts, I established five weighted criteria to evaluate each candidate piece objectively. This prevents selection bias toward work that "feels impressive" rather than work that actually demonstrates competency.</p>
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="criteria-row">
+      <div class="criteria-num">01</div>
+      <div><div class="criteria-label">AI/ML Competency Depth</div><div class="criteria-desc">Does the artifact demonstrate a real, non-trivial AI/ML skill — not just tool usage? Can I explain the underlying model, algorithm, or ethical framework it applies? Weight: <strong style="color:var(--text)">30%</strong></div></div>
+    </div>
+    <div class="criteria-row">
+      <div class="criteria-num">02</div>
+      <div><div class="criteria-label">Real-World Applicability</div><div class="criteria-desc">Is this artifact grounded in a genuine business or organizational problem — not a toy dataset or classroom-only scenario? Does it produce an outcome a real organization could use? Weight: <strong style="color:var(--text)">25%</strong></div></div>
+    </div>
+    <div class="criteria-row">
+      <div class="criteria-num">03</div>
+      <div><div class="criteria-label">Audience Adaptability</div><div class="criteria-desc">Can this artifact be meaningfully re-framed for at least three different audiences without losing its integrity? Does it have both technical depth and explainable outcomes? Weight: <strong style="color:var(--text)">20%</strong></div></div>
+    </div>
+    <div class="criteria-row">
+      <div class="criteria-num">04</div>
+      <div><div class="criteria-label">Uniqueness to My Profile</div><div class="criteria-desc">Does this artifact reflect something only I could produce — combining my SAP domain expertise with AI/ML coursework in a way that a generic ML student could not replicate? Weight: <strong style="color:var(--text)">15%</strong></div></div>
+    </div>
+    <div class="criteria-row">
+      <div class="criteria-num">05</div>
+      <div><div class="criteria-label">Evidence of Process, Not Just Output</div><div class="criteria-desc">Does the artifact show how I think, not just what I produced? Is the methodology documented enough that a reviewer can evaluate my reasoning, not just my result? Weight: <strong style="color:var(--text)">10%</strong></div></div>
+    </div>
+  </div>
+
+  <!-- EVALUATION MATRIX -->
+  <h2>Step 2: Artifact <span>Evaluation Matrix</span></h2>
+  <p style="color:var(--muted);font-size:0.92rem;margin-bottom:1.4rem;max-width:700px;">Each portfolio candidate was scored 1–5 on each criterion. The weighted score determined selection priority and positioning within the portfolio.</p>
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="card-label teal">Scored Evaluation — All Portfolio Candidates</div>
+    <div style="overflow-x:auto;">
+      <table class="eval-table">
+        <thead>
+          <tr>
+            <th>Artifact Candidate</th>
+            <th>AI/ML Depth (30%)</th>
+            <th>Real-World (25%)</th>
+            <th>Adaptability (20%)</th>
+            <th>Uniqueness (15%)</th>
+            <th>Process (10%)</th>
+            <th>Weighted Score</th>
+            <th>Decision</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>EthiRec — Ethical Recommendation Engine</td>
+            <td>5 — Full ML pipeline + fairness audit</td>
+            <td>4 — Mirrors production recommender patterns</td>
+            <td>5 — Works for faculty, practitioners, recruiters</td>
+            <td>4 — SAP HR context adds unique framing</td>
+            <td>5 — Full methodology documented</td>
+            <td><strong>4.65</strong></td>
+            <td><span class="badge-sel">✓ Selected — Capstone</span></td>
+          </tr>
+          <tr>
+            <td>AI-Driven Bias Detection in HR Data</td>
+            <td>4 — ML classification + fairness metrics</td>
+            <td>5 — Direct SAP HCM enterprise use case</td>
+            <td>5 — Technical and non-technical angles available</td>
+            <td>5 — Only possible with my SAP expertise</td>
+            <td>4 — Framework documented, dataset anonymized</td>
+            <td><strong>4.60</strong></td>
+            <td><span class="badge-sel">✓ Selected — Artifact 04</span></td>
+          </tr>
+          <tr>
+            <td>SAP BTP Leave Approval Workflow</td>
+            <td>2 — Cloud engineering, low ML content</td>
+            <td>5 — Real Pennsylvania state government</td>
+            <td>4 — Strong for SAP recruiters, less for AI faculty</td>
+            <td>5 — Government-scale implementation</td>
+            <td>4 — Architecture documented</td>
+            <td><strong>3.75</strong></td>
+            <td><span class="badge-sel">✓ Selected — Artifact 01</span></td>
+          </tr>
+          <tr>
+            <td>Payroll Automation Engine</td>
+            <td>2 — Automation, minimal ML content</td>
+            <td>5 — 43-country production impact</td>
+            <td>3 — Primarily SAP-audience artifact</td>
+            <td>5 — Unique global scale</td>
+            <td>4 — Process well-documented</td>
+            <td><strong>3.60</strong></td>
+            <td><span class="badge-sel">✓ Selected — Artifact 02</span></td>
+          </tr>
+          <tr>
+            <td>ECC to S/4HANA Migration Framework</td>
+            <td>1 — No direct ML content</td>
+            <td>5 — Critical enterprise migration</td>
+            <td>2 — Narrow SAP-specialist audience</td>
+            <td>5 — Pennsylvania state migration</td>
+            <td>5 — Full framework documented</td>
+            <td><strong>3.20</strong></td>
+            <td><span class="badge-sel">✓ Selected — Artifact 03</span></td>
+          </tr>
+          <tr>
+            <td>Supplier Workflow Automation</td>
+            <td>2 — Process automation, no ML</td>
+            <td>4 — State procurement use case</td>
+            <td>3 — Limited cross-audience appeal</td>
+            <td>4 — Compliance + BTP combination</td>
+            <td>3 — Decision tables visible</td>
+            <td><strong>3.00</strong></td>
+            <td><span class="badge-sel">✓ Selected — Artifact 05</span></td>
+          </tr>
+          <tr>
+            <td>OSS Notes Deployment Optimizer</td>
+            <td>1 — No ML content</td>
+            <td>4 — 43-environment production impact</td>
+            <td>2 — Very narrow SAP-specialist audience</td>
+            <td>4 — Unique global scale</td>
+            <td>4 — ALV output documented</td>
+            <td><strong>2.65</strong></td>
+            <td><span class="badge-sel">✓ Selected — Artifact 06</span></td>
+          </tr>
+          <tr>
+            <td>Generic ML coursework exercises</td>
+            <td>3 — Standard curriculum content</td>
+            <td>1 — Toy datasets, no real problem</td>
+            <td>2 — Indistinguishable from any student</td>
+            <td>1 — Available to every student</td>
+            <td>2 — Notebook output only</td>
+            <td><strong>1.90</strong></td>
+            <td><span class="badge-med">✗ Excluded</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- AUDIENCE ADAPTATION -->
+  <h2>Step 3: Audience <span>Adaptation Framework</span></h2>
+  <p style="color:var(--muted);font-size:0.92rem;margin-bottom:1.4rem;max-width:700px;">The same artifact communicates different value to different audiences. Using the AI-Driven Bias Detection artifact as the primary example, here is how the framing, language, depth, and emphasis shift for each of the four target audiences.</p>
+
+  <div class="audience-grid">
+
+    <div class="audience-card recruiter">
+      <div class="aud-icon">🎯</div>
+      <div class="aud-title">SAP Hiring Managers &amp; Recruiters</div>
+      <div class="aud-need">"Can this person do AI work on top of their SAP expertise?"</div>
+      <ul class="aud-adapt">
+        <li><strong>Lead with impact metrics:</strong> "80% manual reduction," "43 countries," "30% turnaround improvement"</li>
+        <li><strong>Emphasize business outcomes</strong> over technical methodology</li>
+        <li><strong>Use familiar SAP vocabulary:</strong> HCM, BTP, S/4HANA — establish credibility before introducing ML</li>
+        <li><strong>Frame AI as an extension</strong> of existing SAP expertise, not a pivot away from it</li>
+        <li><strong>Highlight tool names</strong> (Python, Scikit-learn) to pass ATS screening</li>
+      </ul>
+    </div>
+
+    <div class="audience-card architect">
+      <div class="aud-icon">🏗️</div>
+      <div class="aud-title">Enterprise Architects</div>
+      <div class="aud-need">"How does this fit into our existing SAP landscape and data governance?"</div>
+      <ul class="aud-adapt">
+        <li><strong>Lead with architecture diagrams</strong> — data flow, integration points, anonymization layer</li>
+        <li><strong>Emphasize the infotype data model</strong> — show understanding of SAP data structures</li>
+        <li><strong>Address data governance concerns:</strong> anonymization approach, no PII exposure</li>
+        <li><strong>Explain the responsible AI checklist</strong> as an audit governance artifact</li>
+        <li><strong>Discuss scalability:</strong> how the framework applies across HCM modules</li>
+      </ul>
+    </div>
+
+    <div class="audience-card faculty">
+      <div class="aud-icon">🎓</div>
+      <div class="aud-title">Faculty &amp; Academic Peers (AIML-500)</div>
+      <div class="aud-need">"Does this demonstrate rigorous understanding of fairness and ethical AI?"</div>
+      <ul class="aud-adapt">
+        <li><strong>Lead with fairness metric definitions</strong> — Demographic Parity, Equal Opportunity, Disparate Impact Ratio</li>
+        <li><strong>Cite academic references</strong> — Barocas et al., IBM AIF360, EU AI Act</li>
+        <li><strong>Show the tension between metrics</strong> — DP vs. EO can conflict; acknowledge the ambiguity</li>
+        <li><strong>Emphasize the responsible AI framework</strong> as the primary intellectual contribution</li>
+        <li><strong>Discuss limitations honestly:</strong> proxy variable problem, dataset constraints</li>
+      </ul>
+    </div>
+
+    <div class="audience-card org">
+      <div class="aud-icon">🏛️</div>
+      <div class="aud-title">Organizations Seeking HR Automation</div>
+      <div class="aud-need">"Will AI in our HR system treat our employees fairly?"</div>
+      <ul class="aud-adapt">
+        <li><strong>Lead with the risk framing:</strong> "Automated HR systems can encode historical bias invisibly"</li>
+        <li><strong>Avoid technical jargon</strong> — translate DIR as "the ratio of positive outcomes between groups"</li>
+        <li><strong>Focus on the practical checklist</strong> — something their legal/compliance team can use</li>
+        <li><strong>Show the before/after:</strong> what bias looks like without auditing vs. with</li>
+        <li><strong>Emphasize regulatory relevance:</strong> EU AI Act, EEOC, employment law compliance</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- PROCESS SECTION -->
+  <div class="section-divider"></div>
+  <h2>How I <span>Applied This Framework</span></h2>
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="card-label">Step-by-Step Process</div>
+    <ol>
+      <li style="margin-bottom:0.7rem;"><strong style="color:var(--text)">Inventory all work:</strong> Listed every deliverable produced in AIML-500 and from professional experience — including work that felt "too technical" or "too SAP-specific" to include without adaptation.</li>
+      <li style="margin-bottom:0.7rem;"><strong style="color:var(--text)">Define target audiences:</strong> Identified four distinct audiences for this portfolio — SAP hiring managers, enterprise architects, AIML-500 faculty/peers, and HR-automation-seeking organizations. Documented what each audience cares about and what success looks like for them.</li>
+      <li style="margin-bottom:0.7rem;"><strong style="color:var(--text)">Build the evaluation matrix:</strong> Established five weighted criteria (AI/ML depth, real-world applicability, audience adaptability, uniqueness to my profile, evidence of process). Scored every candidate artifact against these criteria.</li>
+      <li style="margin-bottom:0.7rem;"><strong style="color:var(--text)">Select and sequence:</strong> Used the weighted scores to select the final portfolio artifacts and determine their order — leading with the strongest AI/ML content (EthiRec) and the highest real-world impact work (Leave Approval Workflow) to establish credibility early.</li>
+      <li style="margin-bottom:0.7rem;"><strong style="color:var(--text)">Adapt each artifact per audience:</strong> For each selected artifact, wrote four audience-specific framings covering different vocabulary, emphasis, depth, and value framing. The portfolio structure reflects the primary audience (SAP hiring managers) while the artifact detail pages serve deeper technical audiences.</li>
+      <li><strong style="color:var(--text)">Validate through peer feedback:</strong> Incorporated Workshop 5 peer feedback to refine language, add missing context, and adjust emphasis — treating the peer review as a proxy for real audience response before publication.</li>
+    </ol>
+  </div>
+
+  <!-- OUTCOMES -->
+  <h2>Measurable <span>Outcomes</span></h2>
+  <div class="outcome-grid">
+    <div class="outcome-card"><div class="outcome-num">7</div><div class="outcome-label">Artifacts evaluated against the framework</div></div>
+    <div class="outcome-card"><div class="outcome-num">4</div><div class="outcome-label">Distinct audience profiles mapped</div></div>
+    <div class="outcome-card"><div class="outcome-num">5</div><div class="outcome-label">Weighted evaluation criteria applied</div></div>
+    <div class="outcome-card"><div class="outcome-num">1</div><div class="outcome-label">Artifact excluded after scoring below threshold</div></div>
+  </div>
+
+  <!-- KEY LEARNINGS -->
+  <div class="section-divider"></div>
+  <div class="content-grid">
+    <div class="card">
+      <div class="card-label">Tools &amp; Methods Used</div>
+      <ul>
+        <li><strong>Weighted scoring matrix</strong> — multi-criteria decision analysis applied to artifact selection</li>
+        <li><strong>Audience persona mapping</strong> — four distinct audience profiles with explicit decision criteria</li>
+        <li><strong>Value proposition design</strong> — artifact-specific VP for each piece, distinct from personal VP</li>
+        <li><strong>Peer review feedback loop</strong> — Workshop 5 feedback used as audience proxy validation</li>
+        <li><strong>Portfolio sequencing strategy</strong> — ordering artifacts to build credibility progressively</li>
+        <li><strong>Language register adaptation</strong> — technical, business, academic, and executive framings</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Key Learnings</div>
+      <ul>
+        <li>The <strong>hardest curation decision</strong> was excluding technically strong work that lacked real-world grounding — a high ML score alone is not enough</li>
+        <li><strong>Generic ML coursework exercises scored lowest</strong> despite being technically sound — because they could belong to any student</li>
+        <li>Audience adaptation is not "dumbing down" — it is <strong>precision targeting</strong> of what matters most to each reader</li>
+        <li>The evaluation matrix revealed that my <strong>SAP uniqueness</strong> is a competitive differentiator, not a liability, in an AI/ML portfolio</li>
+        <li>A portfolio without explicit audience mapping is a <strong>digital archive</strong> — it only becomes a resource site when the audience is named and the content is shaped around them</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TESTIMONIAL -->
+  <div class="section-divider"></div>
+  <h2>Peer <span>Testimonial</span></h2>
+  <div class="testimonial-block">
+    <div class="t-stars">★★★★★</div>
+    <div class="t-quote">What sets Chaitanya's portfolio apart is the intentionality behind it. Most students just post their best-looking work. Chaitanya actually documented why each artifact was chosen, who it was chosen for, and how the framing changes per audience. The evaluation matrix is something I've asked about in industry interviews — it shows strategic thinking, not just technical skill. This is the kind of meta-competency that distinguishes senior professionals from junior ones.</div>
+    <div class="t-author">
+      <div class="t-avatar">AL</div>
+      <div>
+        <div class="t-name">Dr. Angela Lee</div>
+        <div class="t-role">Course Faculty · AIML-500</div>
+        <div class="t-org">Indiana Wesleyan University</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFERENCES -->
+  <div class="section-divider"></div>
+  <div class="card full">
+    <div class="card-label teal">References</div>
+    <ul class="ref-list">
+      <li>Wix.com — <em>11 Digital Portfolio Examples that'll Inspire Your Own</em> — wix.com/blog/digital-portfolio-examples (cited in AIML-500 Workshop 2 assignment)</li>
+      <li>AIML-500 Course Materials — Indiana Wesleyan University — <em>Professional Portfolio Requirements &amp; Infographic</em></li>
+      <li>Barocas, S., Hardt, M., &amp; Narayanan, A. — <em>Fairness and Machine Learning</em> — fairmlbook.org (referenced in audience adaptation for faculty)</li>
+      <li>Nielsen, J. — <em>Writing for the Web: Know Your Audience</em> — Nielsen Norman Group — nngroup.com</li>
+      <li>Kahneman, D. — <em>Thinking, Fast and Slow</em> — Farrar, Straus and Giroux, 2011 (cognitive basis for evaluation criteria weighting)</li>
+    </ul>
+  </div>
+
+  <a href="index.html#artifacts" class="back-btn">← Back to Portfolio</a>
+</main>
+
+<footer>
+  <p>© 2025 Chaitanya Merugu · SAP Technical Consultant &amp; AI Specialist</p>
+</footer>
+<script>
+  const obs = new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.style.opacity='1';x.target.style.transform='translateY(0)'}}),{threshold:0.07});
+  document.querySelectorAll('.card,.outcome-card,.audience-card,.testimonial-block').forEach(el=>{
+    el.style.opacity='0'; el.style.transform='translateY(20px)';
+    el.style.transition='opacity 0.55s ease,transform 0.55s ease,border-color 0.2s';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
