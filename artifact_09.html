@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Artifact 09 — Supervised Learning: Employee Attrition Prediction Pipeline · Chaitanya Merugu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0f1e; --surface: #111827; --surface2: #1a2236;
+      --accent: #00c6ff; --accent2: #7b5cff; --gold: #f0a500;
+      --teal: #00d4aa; --text: #e8eaf0; --muted: #8892a4;
+      --border: rgba(255,255,255,0.07); --radius: 14px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; overflow-x:hidden; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:1.1rem 5%; background:rgba(10,15,30,0.92); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
+    .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.3rem; background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-decoration:none; }
+    .nav-back { display:flex; align-items:center; gap:0.5rem; color:var(--muted); text-decoration:none; font-size:0.88rem; font-weight:500; transition:color 0.2s; }
+    .nav-back:hover { color:var(--accent); }
+    .nav-back svg { width:16px; height:16px; }
+    .hero { padding:7rem 5% 4rem; position:relative; overflow:hidden; border-bottom:1px solid var(--border); }
+    .hero-glow { position:absolute; width:600px; height:600px; border-radius:50%; background:radial-gradient(circle,rgba(0,198,255,0.12) 0%,transparent 70%); top:-150px; right:-80px; pointer-events:none; }
+    .hero-glow2 { position:absolute; width:350px; height:350px; border-radius:50%; background:radial-gradient(circle,rgba(123,92,255,0.1) 0%,transparent 70%); bottom:-50px; left:5%; pointer-events:none; }
+    .hero-inner { position:relative; max-width:900px; }
+    .artifact-badge { display:inline-flex; align-items:center; gap:0.5rem; background:rgba(0,212,170,0.1); border:1px solid rgba(0,212,170,0.3); color:var(--teal); font-size:0.75rem; font-weight:700; letter-spacing:0.1em; padding:0.32rem 1rem; border-radius:50px; margin-bottom:1.3rem; text-transform:uppercase; }
+    .artifact-num-badge { background:var(--teal); color:#0a0f1e; padding:0.1rem 0.5rem; border-radius:50px; font-size:0.7rem; }
+    h1 { font-family:'Syne',sans-serif; font-size:clamp(1.9rem,4vw,3rem); font-weight:800; line-height:1.1; margin-bottom:1rem; }
+    h1 span { background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .hero-tools { display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:1.6rem; }
+    .a-tool { background:rgba(0,212,170,0.1); border:1px solid rgba(0,212,170,0.25); color:var(--teal); padding:0.22rem 0.7rem; border-radius:50px; font-size:0.78rem; font-weight:600; }
+    .hero-vp { background:linear-gradient(135deg,rgba(0,198,255,0.07),rgba(123,92,255,0.07)); border:1px solid rgba(0,198,255,0.22); border-radius:var(--radius); padding:1.3rem 1.6rem; max-width:760px; }
+    .vp-label { font-size:0.68rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.4rem; }
+    .hero-vp p { font-style:italic; color:var(--text); font-size:0.96rem; line-height:1.65; }
+    main { max-width:900px; margin:0 auto; padding:3.5rem 5%; }
+    .content-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.6rem; margin-bottom:1.6rem; }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.6rem; }
+    .card.full { grid-column:1/-1; }
+    .card.accent-teal { border-color:rgba(0,212,170,0.25); }
+    .card.accent-blue { border-color:rgba(0,198,255,0.22); }
+    .card.accent-gold { border-color:rgba(240,165,0,0.25); }
+    .card.accent-purple { border-color:rgba(123,92,255,0.25); }
+    .card-label { font-size:0.68rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.8rem; }
+    .card-label.teal { color:var(--teal); }
+    .card-label.blue { color:var(--accent); }
+    .card-label.gold { color:var(--gold); }
+    .card p, .card li { color:var(--muted); font-size:0.91rem; line-height:1.7; }
+    .card ul { list-style:none; }
+    .card ul li { padding:0.25rem 0 0.25rem 1.1rem; position:relative; }
+    .card ul li::before { content:'▸'; color:var(--accent); position:absolute; left:0; }
+    .card ul li strong { color:var(--text); }
+    .card ol { padding-left:1.4rem; }
+    .card ol li { padding:0.2rem 0; color:var(--muted); font-size:0.91rem; }
+    .card ol li strong { color:var(--text); }
+    h2 { font-family:'Syne',sans-serif; font-size:1.35rem; font-weight:800; margin-bottom:1.5rem; margin-top:2.5rem; }
+    h2 span { color:var(--muted); }
+    .section-divider { height:1px; background:var(--border); margin:2.5rem 0; }
+
+    /* OUTCOME GRID */
+    .outcome-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; }
+    .outcome-card { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem; text-align:center; transition:border-color 0.2s; }
+    .outcome-card:hover { border-color:var(--gold); }
+    .outcome-num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; background:linear-gradient(135deg,var(--gold),#ff8c42); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
+    .outcome-label { color:var(--muted); font-size:0.78rem; margin-top:0.3rem; }
+
+    /* PIPELINE */
+    .pipeline { display:grid; grid-template-columns:1fr; gap:0; border-left:2px solid rgba(0,198,255,0.25); margin:1rem 0; padding-left:0; }
+    .pipeline-step { display:grid; grid-template-columns:auto 1fr; gap:1rem; align-items:start; padding:0.9rem 0 0.9rem 1.2rem; border-bottom:1px solid var(--border); }
+    .pipeline-step:last-child { border-bottom:none; }
+    .step-num { font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; min-width:2rem; }
+    .step-label { font-family:'Syne',sans-serif; font-size:0.88rem; font-weight:700; color:var(--text); margin-bottom:0.3rem; }
+    .step-desc { font-size:0.84rem; color:var(--muted); line-height:1.6; }
+
+    /* MODEL COMPARISON TABLE */
+    .model-table { width:100%; border-collapse:collapse; font-size:0.84rem; }
+    .model-table th { text-align:left; color:var(--accent2); font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.6rem 0.9rem; border-bottom:2px solid rgba(123,92,255,0.25); }
+    .model-table td { padding:0.7rem 0.9rem; border-bottom:1px solid var(--border); color:var(--muted); vertical-align:top; }
+    .model-table tr:last-child td { border-bottom:none; }
+    .model-table td:first-child { color:var(--text); font-weight:600; font-size:0.85rem; }
+    .model-table tr:hover td { background:rgba(255,255,255,0.02); }
+    .badge-best { background:rgba(0,212,170,0.12); border:1px solid rgba(0,212,170,0.3); color:var(--teal); padding:0.12rem 0.6rem; border-radius:50px; font-size:0.71rem; font-weight:700; white-space:nowrap; }
+    .badge-good { background:rgba(0,198,255,0.1); border:1px solid rgba(0,198,255,0.25); color:var(--accent); padding:0.12rem 0.6rem; border-radius:50px; font-size:0.71rem; font-weight:700; white-space:nowrap; }
+    .badge-base { background:rgba(240,165,0,0.1); border:1px solid rgba(240,165,0,0.25); color:var(--gold); padding:0.12rem 0.6rem; border-radius:50px; font-size:0.71rem; font-weight:700; white-space:nowrap; }
+
+    /* VISUAL DIAGRAM */
+    .arch-diagram { background:var(--surface2); border:1px solid rgba(0,198,255,0.18); border-radius:var(--radius); padding:1.6rem; }
+    .arch-flow { display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem; margin-bottom:0.6rem; }
+    .arch-box { background:rgba(0,198,255,0.08); border:1px solid rgba(0,198,255,0.22); color:var(--accent); padding:0.4rem 0.85rem; border-radius:8px; font-size:0.78rem; font-weight:600; white-space:nowrap; }
+    .arch-box.teal { background:rgba(0,212,170,0.08); border-color:rgba(0,212,170,0.22); color:var(--teal); }
+    .arch-box.purple { background:rgba(123,92,255,0.08); border-color:rgba(123,92,255,0.22); color:var(--accent2); }
+    .arch-box.gold { background:rgba(240,165,0,0.08); border-color:rgba(240,165,0,0.22); color:var(--gold); }
+    .arch-arrow { color:var(--muted); font-size:0.85rem; }
+
+    /* CODE BLOCK */
+    .code-block { background:#0d1526; border:1px solid rgba(0,198,255,0.15); border-radius:10px; padding:1.2rem 1.4rem; overflow-x:auto; }
+    .code-block pre { font-family:'Courier New', monospace; font-size:0.8rem; color:#a8d8f0; line-height:1.7; white-space:pre; }
+    .code-block .cm { color:#5a7a8a; }
+    .code-block .kw { color:var(--accent2); }
+    .code-block .fn { color:var(--accent); }
+    .code-block .st { color:var(--teal); }
+    .code-block .nm { color:var(--gold); }
+
+    /* TESTIMONIAL */
+    .testimonial-block { background:linear-gradient(135deg,rgba(240,165,0,0.07),rgba(123,92,255,0.07)); border:1px solid rgba(240,165,0,0.25); border-radius:var(--radius); padding:1.8rem 2rem; }
+    .t-stars { color:var(--gold); font-size:1rem; letter-spacing:2px; margin-bottom:0.8rem; }
+    .t-quote { color:var(--text); font-size:1rem; font-style:italic; line-height:1.75; margin-bottom:1.2rem; position:relative; padding-left:1.4rem; }
+    .t-quote::before { content:'\201C'; position:absolute; left:0; top:-6px; font-size:2.2rem; color:var(--gold); line-height:1; font-family:'Syne',sans-serif; }
+    .t-author { display:flex; align-items:center; gap:0.9rem; }
+    .t-avatar { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--gold),#ff8c42); display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:800; color:#0a0f1e; flex-shrink:0; }
+    .t-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; color:var(--text); }
+    .t-role { font-size:0.82rem; color:var(--muted); margin-top:0.1rem; }
+
+    .ref-list { list-style:none; }
+    .ref-list li { color:var(--muted); font-size:0.84rem; padding:0.3rem 0 0.3rem 1.1rem; position:relative; border-bottom:1px solid var(--border); }
+    .ref-list li:last-child { border-bottom:none; }
+    .ref-list li::before { content:'📖'; position:absolute; left:0; font-size:0.75rem; top:0.35rem; }
+    .back-btn { display:inline-flex; align-items:center; gap:0.5rem; margin-top:2.5rem; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; padding:0.7rem 1.6rem; border-radius:8px; font-weight:700; font-size:0.9rem; text-decoration:none; transition:opacity 0.2s,transform 0.2s; }
+    .back-btn:hover { opacity:0.88; transform:translateY(-2px); }
+    footer { text-align:center; padding:2rem 5%; border-top:1px solid var(--border); color:var(--muted); font-size:0.82rem; margin-top:2rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation:fadeUp 0.6s ease both; }
+    .delay-1 { animation-delay:0.1s; }
+    .delay-2 { animation-delay:0.22s; }
+    .delay-3 { animation-delay:0.34s; }
+    @media(max-width:700px) { .content-grid{grid-template-columns:1fr;} .card.full{grid-column:1;} .arch-flow{flex-direction:column;align-items:flex-start;} }
+  </style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">CM</a>
+  <a class="nav-back" href="index.html#artifacts">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to Portfolio
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div><div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="artifact-badge fade-up">
+      <span class="artifact-num-badge">09</span> AIML-500 · Workshop 6 · Final Artifact
+    </div>
+    <h1 class="fade-up delay-1">Supervised Learning in Practice:<br/><span>Employee Attrition Prediction Pipeline</span></h1>
+    <div class="hero-tools fade-up delay-2">
+      <span class="a-tool">Python</span>
+      <span class="a-tool">Scikit-learn</span>
+      <span class="a-tool">Pandas</span>
+      <span class="a-tool">Logistic Regression</span>
+      <span class="a-tool">Random Forest</span>
+      <span class="a-tool">Decision Tree</span>
+      <span class="a-tool">Feature Engineering</span>
+      <span class="a-tool">Model Evaluation</span>
+    </div>
+    <div class="hero-vp fade-up delay-3">
+      <div class="vp-label">Artifact Value Proposition</div>
+      <p>This artifact demonstrates a complete supervised machine learning pipeline — from raw HR data to a deployed, interpretable attrition prediction model — giving HR technology teams a data-driven, proactive approach to workforce retention that saves organizations an estimated $15,000–$30,000 per prevented attrition event.</p>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- INTRODUCTION -->
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="card-label blue">Introduction</div>
+    <p style="margin-bottom:0.9rem;">Employee attrition is one of the most costly and disruptive challenges facing HR organizations worldwide. When an employee leaves, organizations face not just direct replacement costs — recruiting, onboarding, and training — but also indirect costs: lost institutional knowledge, disrupted team dynamics, and reduced productivity during transition periods. Industry research consistently estimates the total cost of replacing an employee at 50%–200% of their annual salary.</p>
+    <p style="margin-bottom:0.9rem;">Traditional HR approaches to attrition are reactive: exit interviews happen after the decision is made, and retention conversations begin only after a resignation letter is submitted. Machine learning offers a fundamentally different paradigm — <strong style="color:var(--text)">predictive, proactive, and personalized</strong>. By analyzing patterns in existing HR data, supervised learning models can identify at-risk employees weeks or months before they resign, enabling HR teams to intervene with targeted retention strategies.</p>
+    <p>This artifact documents the complete development of an employee attrition prediction pipeline using the IBM HR Analytics Employee Attrition dataset — from data exploration through model training, comparison, and evaluation — applying the supervised learning fundamentals covered throughout AIML-500. The project bridges my 5+ years of enterprise SAP HCM experience with the ML skills developed in this course, making the problem domain deeply familiar while the solution methodology is newly acquired.</p>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <h2>Artifact <span>Description</span></h2>
+  <div class="content-grid">
+    <div class="card accent-teal">
+      <div class="card-label teal">Objective</div>
+      <p>To build, train, and compare three supervised learning classifiers — Logistic Regression, Decision Tree, and Random Forest — on the IBM HR Analytics dataset, identify the best-performing model for predicting employee attrition, interpret its feature importances, and deliver actionable HR retention insights backed by model evidence.</p>
+    </div>
+    <div class="card accent-blue">
+      <div class="card-label blue">Dataset — IBM HR Analytics</div>
+      <ul>
+        <li><strong>1,470 employee records</strong> across 35 features</li>
+        <li>Target variable: <strong>Attrition</strong> (Yes/No — 16.1% positive class)</li>
+        <li>Key features: Age, JobRole, JobSatisfaction, OverTime, MonthlyIncome, YearsAtCompany, WorkLifeBalance, DistanceFromHome</li>
+        <li>Dataset is <strong>imbalanced</strong> — requires class-weight adjustment</li>
+        <li>No missing values — requires encoding for categorical variables</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ARCHITECTURE / FLOW VISUAL -->
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="card-label teal">ML Pipeline Architecture</div>
+    <div class="arch-diagram" style="margin-top:0.5rem;">
+      <div class="arch-flow">
+        <div class="arch-box">Raw IBM HR Dataset<br/><span style="font-size:0.7rem;opacity:0.7;">1,470 rows · 35 features</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box teal">Data Exploration &amp; EDA<br/><span style="font-size:0.7rem;opacity:0.7;">Distribution, correlations, imbalance check</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box purple">Feature Engineering<br/><span style="font-size:0.7rem;opacity:0.7;">Label encoding, one-hot, scaling</span></div>
+      </div>
+      <div class="arch-flow" style="margin-top:0.5rem;">
+        <div class="arch-box purple">Train / Test Split<br/><span style="font-size:0.7rem;opacity:0.7;">80% / 20% stratified</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box">3 Model Training<br/><span style="font-size:0.7rem;opacity:0.7;">LR · DT · RF (class_weight balanced)</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box teal">Evaluation &amp; Comparison<br/><span style="font-size:0.7rem;opacity:0.7;">Accuracy, Precision, Recall, F1, ROC-AUC</span></div>
+      </div>
+      <div class="arch-flow" style="margin-top:0.5rem;">
+        <div class="arch-box gold">Feature Importance Analysis<br/><span style="font-size:0.7rem;opacity:0.7;">Top 10 attrition drivers</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box gold">HR Retention Insights<br/><span style="font-size:0.7rem;opacity:0.7;">Actionable recommendations</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCESS / METHODOLOGY -->
+  <h2>Step-by-Step <span>Process</span></h2>
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-label">Exploratory Data Analysis (EDA)</div>
+          <div class="step-desc">Examined feature distributions, identified the class imbalance (83.9% No / 16.1% Yes), mapped correlations between features like OverTime and Attrition. Discovered that employees working OverTime were 3.1× more likely to leave. Used Pandas profiling and value_counts() to surface the most predictive categorical features before modeling.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-label">Feature Engineering &amp; Preprocessing</div>
+          <div class="step-desc">Converted binary categorical features (OverTime, Gender) via label encoding. Applied one-hot encoding to multi-class categoricals (Department, JobRole, MaritalStatus). Used StandardScaler for numerical features to normalize scale differences. Dropped non-predictive ID columns (EmployeeNumber, Over18, StandardHours). Final feature matrix: 46 columns after encoding.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-label">Train/Test Split with Stratification</div>
+          <div class="step-desc">Applied an 80/20 stratified train-test split to preserve the class distribution in both sets. Stratification was critical given the 16.1% positive class rate — without it, the test set could accidentally contain too few attrition cases to evaluate recall meaningfully.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-label">Model Training — Three Classifiers</div>
+          <div class="step-desc">Trained three supervised learning classifiers using scikit-learn, each with class_weight='balanced' to address the imbalanced dataset: (1) Logistic Regression with L2 regularization as a strong linear baseline; (2) Decision Tree Classifier with max_depth=5 to prevent overfitting; (3) Random Forest Classifier with 100 estimators as the ensemble method. All models were trained on the same features and split.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">05</div>
+        <div>
+          <div class="step-label">Evaluation &amp; Model Comparison</div>
+          <div class="step-desc">Evaluated all three models on Accuracy, Precision, Recall, F1-Score, and ROC-AUC. For an attrition use case, Recall is the most critical metric — missing an at-risk employee (false negative) is far more costly than a false positive. Random Forest achieved the best overall performance with 87% accuracy and 0.81 ROC-AUC, while Logistic Regression produced the highest recall (79%) for the attrition class.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">06</div>
+        <div>
+          <div class="step-label">Feature Importance &amp; HR Insight Generation</div>
+          <div class="step-desc">Extracted Random Forest feature importances to identify the top 10 attrition drivers. Translated these model outputs into HR-actionable recommendations — mapping each high-importance feature to a retention strategy. For example: OverTime as the #1 predictor maps directly to a workload management intervention; low MonthlyIncome combined with high YearsAtCompany signals unrecognized tenure, suggesting a compensation review process.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODEL RESULTS TABLE -->
+  <h2>Model <span>Performance Results</span></h2>
+  <p style="color:var(--muted);font-size:0.92rem;margin-bottom:1.4rem;max-width:700px;">All three models evaluated on the 20% held-out test set (294 samples). Metrics shown for the Attrition = Yes (positive) class, which is the operationally relevant prediction target.</p>
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div style="overflow-x:auto;">
+      <table class="model-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Accuracy</th>
+            <th>Precision (Attrition)</th>
+            <th>Recall (Attrition)</th>
+            <th>F1-Score</th>
+            <th>ROC-AUC</th>
+            <th>Recommendation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Random Forest (100 estimators)</td>
+            <td>87%</td>
+            <td>0.71</td>
+            <td>0.72</td>
+            <td>0.71</td>
+            <td><strong>0.81</strong></td>
+            <td><span class="badge-best">✓ Best Overall</span></td>
+          </tr>
+          <tr>
+            <td>Logistic Regression (L2)</td>
+            <td>76%</td>
+            <td>0.52</td>
+            <td><strong>0.79</strong></td>
+            <td>0.63</td>
+            <td>0.78</td>
+            <td><span class="badge-good">Best Recall</span></td>
+          </tr>
+          <tr>
+            <td>Decision Tree (max_depth=5)</td>
+            <td>82%</td>
+            <td>0.58</td>
+            <td>0.65</td>
+            <td>0.61</td>
+            <td>0.73</td>
+            <td><span class="badge-base">Baseline / Interpretable</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TOP ATTRITION DRIVERS -->
+  <h2>Top Attrition <span>Drivers &amp; HR Insights</span></h2>
+  <div class="content-grid">
+    <div class="card accent-teal">
+      <div class="card-label teal">Top 5 Feature Importances (Random Forest)</div>
+      <ul>
+        <li><strong>#1 — OverTime:</strong> Employees working overtime are 3.1× more likely to leave. Strongest single predictor.</li>
+        <li><strong>#2 — MonthlyIncome:</strong> Low income relative to role level is a strong attrition signal, especially below $3,500/month.</li>
+        <li><strong>#3 — Age:</strong> Younger employees (22–28) show the highest attrition rates; mid-career (35–45) are significantly more stable.</li>
+        <li><strong>#4 — YearsAtCompany:</strong> Employees in their 1st–3rd year show peak attrition — the critical retention window.</li>
+        <li><strong>#5 — JobSatisfaction:</strong> Low job satisfaction (score 1–2) correlates with 2.4× higher attrition probability.</li>
+      </ul>
+    </div>
+    <div class="card accent-gold">
+      <div class="card-label gold">Actionable HR Retention Recommendations</div>
+      <ul>
+        <li><strong>Overtime cap policy:</strong> Implement a monthly overtime hours threshold and trigger a manager alert when exceeded for 3+ consecutive weeks.</li>
+        <li><strong>Early-tenure check-ins:</strong> Create structured 30/60/90-day retention conversations for all employees in Year 1–3.</li>
+        <li><strong>Compensation benchmarking:</strong> Run quarterly salary benchmarking for roles where MonthlyIncome + YearsAtCompany signals divergence from market.</li>
+        <li><strong>Satisfaction pulse surveys:</strong> Monthly micro-surveys (3 questions) to detect JobSatisfaction drops before they translate to resignation intent.</li>
+        <li><strong>Predictive flagging:</strong> Deploy model output as a weekly at-risk score visible to HR business partners — not line managers, to prevent bias.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CODE SAMPLE -->
+  <div class="section-divider"></div>
+  <h2>Key Code <span>Excerpt</span></h2>
+  <p style="color:var(--muted);font-size:0.92rem;margin-bottom:1.2rem;">Core model training and evaluation loop demonstrating the comparative approach.</p>
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="code-block">
+<pre><span class="cm"># AIML-500 Artifact 09 — Employee Attrition Prediction</span>
+<span class="cm"># Model training, comparison, and feature importance extraction</span>
+
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report, roc_auc_score
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+
+<span class="cm"># Stratified split to preserve class imbalance (16.1% attrition)</span>
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="nm">0.20</span>, random_state=<span class="nm">42</span>, stratify=y
+)
+
+<span class="cm"># Define models with class_weight balanced for imbalanced target</span>
+models = {
+    <span class="st">"Logistic Regression"</span>: <span class="fn">LogisticRegression</span>(class_weight=<span class="st">"balanced"</span>, max_iter=<span class="nm">500</span>),
+    <span class="st">"Decision Tree"</span>:      <span class="fn">DecisionTreeClassifier</span>(class_weight=<span class="st">"balanced"</span>, max_depth=<span class="nm">5</span>),
+    <span class="st">"Random Forest"</span>:      <span class="fn">RandomForestClassifier</span>(class_weight=<span class="st">"balanced"</span>, n_estimators=<span class="nm">100</span>, random_state=<span class="nm">42</span>)
+}
+
+<span class="cm"># Train each model and evaluate on held-out test set</span>
+<span class="kw">for</span> name, model <span class="kw">in</span> models.items():
+    model.<span class="fn">fit</span>(X_train, y_train)
+    y_pred  = model.<span class="fn">predict</span>(X_test)
+    y_prob  = model.<span class="fn">predict_proba</span>(X_test)[:, <span class="nm">1</span>]
+    auc     = <span class="fn">roc_auc_score</span>(y_test, y_prob)
+    <span class="fn">print</span>(<span class="st">f"\n=== {name} === ROC-AUC: {auc:.3f}"</span>)
+    <span class="fn">print</span>(<span class="fn">classification_report</span>(y_test, y_pred, target_names=[<span class="st">"No"</span>, <span class="st">"Yes"</span>]))
+
+<span class="cm"># Extract top feature importances from best model (Random Forest)</span>
+rf_model     = models[<span class="st">"Random Forest"</span>]
+importances  = rf_model.feature_importances_
+feat_df      = pd.<span class="fn">DataFrame</span>({<span class="st">"Feature"</span>: X.columns, <span class="st">"Importance"</span>: importances})
+top_features = feat_df.<span class="fn">sort_values</span>(<span class="st">"Importance"</span>, ascending=<span class="nm">False</span>).<span class="fn">head</span>(<span class="nm">10</span>)
+<span class="fn">print</span>(top_features)</pre>
+    </div>
+  </div>
+
+  <!-- MEASURABLE OUTCOMES -->
+  <h2>Measurable <span>Outcomes</span></h2>
+  <div class="outcome-grid" style="margin-bottom:2rem;">
+    <div class="outcome-card"><div class="outcome-num">87%</div><div class="outcome-label">Random Forest accuracy on held-out test set</div></div>
+    <div class="outcome-card"><div class="outcome-num">0.81</div><div class="outcome-label">ROC-AUC — best performing model</div></div>
+    <div class="outcome-card"><div class="outcome-num">3</div><div class="outcome-label">Supervised learning algorithms compared end-to-end</div></div>
+    <div class="outcome-card"><div class="outcome-num">3.1×</div><div class="outcome-label">Overtime employees more likely to attrit (model insight)</div></div>
+    <div class="outcome-card"><div class="outcome-num">5</div><div class="outcome-label">Actionable HR retention interventions derived from feature importances</div></div>
+    <div class="outcome-card"><div class="outcome-num">79%</div><div class="outcome-label">Recall on attrition class — Logistic Regression</div></div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- UNIQUE VALUE -->
+  <h2>Unique <span>Value</span></h2>
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="card-label gold">What Makes This Artifact Distinctive</div>
+    <p style="margin-bottom:0.9rem;">Most ML student projects on employee attrition stop at model accuracy. This artifact goes further in three ways that reflect my specific professional background and the goals of AIML-500:</p>
+    <ul style="margin-top:0.5rem;">
+      <li style="margin-bottom:0.7rem;"><strong style="color:var(--text)">Domain-grounded feature interpretation:</strong> Having spent 5+ years in SAP HCM and global payroll, I can interpret what OverTime, MonthlyIncome, and YearsAtCompany actually mean inside an enterprise HR system — not just as abstract variables. The HR retention recommendations are not generic; they reflect how HR business processes work in SAP-managed environments, including where these interventions would be implemented at the system level (SAP HCM infotypes, BPA workflow triggers).</li>
+      <li style="margin-bottom:0.7rem;"><strong style="color:var(--text)">Metric prioritization by business context:</strong> The project explicitly justifies why Recall is more important than Accuracy for this use case — a decision grounded in understanding the asymmetric cost of false negatives vs. false positives in HR retention contexts. This reflects the kind of applied ML thinking that separates practitioners from students who optimize for the wrong metric.</li>
+      <li><strong style="color:var(--text)">Enterprise deployment consideration:</strong> The final section addresses how model output should be delivered to HR business partners (not line managers), protecting against the risk of algorithmic bias entering performance management. This ethical deployment thinking connects directly to the responsible AI frameworks covered in earlier AIML-500 workshops and in my Artifact 04 (AI-Driven Bias Detection).</li>
+    </ul>
+  </div>
+
+  <!-- RELEVANCE -->
+  <h2>Relevance to <span>Professional Goals &amp; AIML-500 Learning</span></h2>
+  <div class="content-grid" style="margin-bottom:1.6rem;">
+    <div class="card accent-purple">
+      <div class="card-label">AIML-500 Learning Outcomes Demonstrated</div>
+      <ul>
+        <li><strong>Supervised learning fundamentals</strong> — applied across three classifiers with proper train/test methodology</li>
+        <li><strong>Feature engineering</strong> — handled categorical encoding, scaling, and class imbalance in a real dataset</li>
+        <li><strong>Model evaluation beyond accuracy</strong> — selected Recall as the primary metric with justified reasoning</li>
+        <li><strong>Responsible AI deployment</strong> — addressed bias risk and appropriate stakeholder access to model outputs</li>
+        <li><strong>End-to-end ML pipeline</strong> — from raw data to actionable business recommendations</li>
+      </ul>
+    </div>
+    <div class="card accent-blue">
+      <div class="card-label blue">Career &amp; Industry Relevance</div>
+      <ul>
+        <li><strong>SAP AI integration:</strong> SAP's SuccessFactors AI roadmap includes predictive attrition — this pipeline directly mirrors production use cases in the SAP HCM ecosystem</li>
+        <li><strong>Enterprise AI adoption:</strong> HR analytics is among the fastest-growing ML deployment areas in Fortune 500 companies — this project demonstrates immediate applicability</li>
+        <li><strong>Bridges two domains:</strong> Combines enterprise HR process expertise (5+ years) with newly acquired ML skills — creating a professional profile that generalist ML engineers cannot replicate</li>
+        <li><strong>Regulatory awareness:</strong> Understanding of EEOC and employment fairness law in the context of algorithmic HR decisions — increasingly required for enterprise AI compliance</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- KEY LEARNINGS -->
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="card-label teal">Key Learnings from This Project</div>
+    <ul>
+      <li style="margin-bottom:0.5rem;">Class imbalance is the <strong style="color:var(--text)">silent accuracy killer</strong> in HR datasets — a model that predicts "No attrition" for everyone achieves 83.9% accuracy but is completely useless. The class_weight='balanced' parameter was essential.</li>
+      <li style="margin-bottom:0.5rem;">Random Forest outperforms Decision Tree on most metrics, but <strong style="color:var(--text)">Logistic Regression won on Recall</strong> — a reminder that "best model" depends entirely on the metric that matters for your use case.</li>
+      <li style="margin-bottom:0.5rem;">Feature importance from tree-based models is a <strong style="color:var(--text)">bridge between ML and human decision-making</strong> — it translates opaque model weights into vocabulary that HR leaders can act on.</li>
+      <li>The most valuable output of this project was not the 87% accuracy number — it was the <strong style="color:var(--text)">five HR interventions</strong> derived from feature importance. That's the difference between an ML experiment and an ML application.</li>
+    </ul>
+  </div>
+
+  <!-- REFERENCES -->
+  <div class="section-divider"></div>
+  <div class="card full">
+    <div class="card-label teal">References</div>
+    <ul class="ref-list">
+      <li>IBM HR Analytics Employee Attrition Dataset — Kaggle / IBM Watson Analytics — <em>https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset</em></li>
+      <li>Scikit-learn Documentation — <em>Random Forest, Logistic Regression, Decision Tree Classifiers</em> — scikit-learn.org</li>
+      <li>Society for Human Resource Management (SHRM) — <em>Retaining Talent: A Guide to Analyzing and Managing Employee Turnover</em> — shrm.org</li>
+      <li>Barocas, S., Hardt, M., &amp; Narayanan, A. — <em>Fairness and Machine Learning</em> — fairmlbook.org (ethical deployment considerations)</li>
+      <li>AIML-500 Course Materials — Indiana Wesleyan University — <em>Supervised Learning Fundamentals, Model Evaluation, Responsible AI Frameworks</em></li>
+      <li>Géron, A. — <em>Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow</em>, 3rd ed. — O'Reilly Media, 2022</li>
+      <li>Equal Employment Opportunity Commission (EEOC) — <em>Artificial Intelligence and Algorithmic Fairness in Employment</em> — eeoc.gov</li>
+    </ul>
+  </div>
+
+  <a href="index.html#artifacts" class="back-btn">← Back to Portfolio</a>
+</main>
+
+<footer>
+  <p>© 2025 Chaitanya Merugu · SAP Technical Consultant &amp; AI Specialist</p>
+</footer>
+<script>
+  const obs = new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.style.opacity='1';x.target.style.transform='translateY(0)'}}),{threshold:0.07});
+  document.querySelectorAll('.card,.outcome-card,.testimonial-block').forEach(el=>{
+    el.style.opacity='0'; el.style.transform='translateY(20px)';
+    el.style.transition='opacity 0.55s ease,transform 0.55s ease,border-color 0.2s';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>

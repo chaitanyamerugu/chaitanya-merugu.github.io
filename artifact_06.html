@@ -169,6 +169,13 @@
 </div>
 
 <main>
+  <!-- INTRODUCTION -->
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="card-label blue">Introduction</div>
+    <p style="margin-bottom:0.9rem;">In global SAP payroll environments, support package upgrades are simultaneously the most necessary and most dangerous maintenance activity. SAP releases thousands of OSS Notes and support packages annually — critical for legal compliance, security, and country-specific payroll calculations. But in a landscape with 43 country payroll configurations and thousands of client-specific Z objects, every upgrade carries the risk of silently overwriting customizations that took years to build and test.</p>
+    <p>This artifact documents the design and implementation of a pre/post-deployment safety system built to protect ADP's global payroll landscape — an ABAP-based conflict scanner that gives the Basis team a pre-flight checklist before every upgrade, reducing system downtime by 25% and eliminating the reactive firefighting that previously followed every support package deployment.</p>
+  </div>
+  <h2>Artifact <span>Description</span></h2>
   <div class="content-grid">
     <div class="card accent-teal">
       <div class="card-label teal">Objective</div>
@@ -253,6 +260,41 @@
         <li>An interactive ALV report gives Basis teams <strong>decision-quality information</strong> without requiring ABAP expertise</li>
         <li>Post-deployment validation closes the feedback loop — turning a reactive process into a <strong>closed-loop quality system</strong></li>
         <li>Maintaining a living critical-objects registry per country is foundational to sustainable global payroll operations</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- UNIQUE VALUE -->
+  <div class="section-divider"></div>
+  <h2>Unique <span>Value</span></h2>
+  <div class="card full" style="margin-bottom:1.6rem;">
+    <div class="card-label gold">What Makes This Artifact Distinctive</div>
+    <ul>
+      <li style="margin-bottom:0.6rem;"><strong style="color:var(--text)">Proactive vs. reactive upgrade management:</strong> Before this tool, ADP's Basis team discovered conflicts after deployment — during hypercare, when production issues appeared. This scanner shifts the discovery to before deployment, fundamentally changing the risk profile of every upgrade cycle. The 25% reduction in downtime is a direct result of this shift from reactive firefighting to proactive prevention.</li>
+      <li style="margin-bottom:0.6rem;"><strong style="color:var(--text)">43-environment scale:</strong> Building a validation tool that correctly handles 43 distinct country payroll configurations requires understanding how SAP's object versioning, transport layers, and client-specific customizations interact across different system landscapes. This is not a single-client solution — it is a multi-environment safety framework designed for the complexity of a global payroll platform.</li>
+      <li><strong style="color:var(--text)">Deep SPAM/SNOTE architecture knowledge:</strong> The scanner reads SAP's internal SPAM/SNOTE queue structures and cross-references them against maintained critical object lists — a capability that requires understanding SAP's internal upgrade architecture at a level far beyond standard ABAP development. This reflects the kind of specialized Basis-adjacent knowledge that senior SAP developers acquire over years of upgrade project experience.</li>
+    </ul>
+  </div>
+
+  <!-- RELEVANCE -->
+  <h2>Relevance to <span>Career &amp; Industry</span></h2>
+  <div class="content-grid" style="margin-bottom:1.6rem;">
+    <div class="card accent-teal">
+      <div class="card-label teal">Career Relevance</div>
+      <ul>
+        <li>Validates advanced <strong>SAP Basis-adjacent ABAP expertise</strong> for roles requiring upgrade and maintenance tooling experience</li>
+        <li>ALV reporting design and interactive drill-down capability are core senior ABAP developer skills</li>
+        <li>Multi-environment deployment experience signals readiness for <strong>SAP Technical Lead</strong> and delivery ownership roles</li>
+        <li>SPDD/SPAU coordination demonstrates cross-functional collaboration with Basis teams during high-risk activities</li>
+      </ul>
+    </div>
+    <div class="card accent-blue">
+      <div class="card-label blue">Industry Relevance</div>
+      <ul>
+        <li>Every enterprise SAP system requires regular support package and OSS Note deployments — this tooling pattern is applicable across any SAP landscape</li>
+        <li>As SAP pushes customers toward cloud and S/4HANA, upgrade frequency is increasing — making proactive conflict detection more critical than ever</li>
+        <li>Global payroll operations at ADP and similar platforms have strict SLA requirements; system downtime during upgrades directly impacts client contractual commitments</li>
+        <li>The documentation approach demonstrated here (technical guide + ALV output) is the standard deliverable for enterprise-grade SAP tooling</li>
       </ul>
     </div>
   </div>
