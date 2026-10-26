@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Artifact 10 — Machine Learning Algorithm Types · Chaitanya Merugu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0a0f1e;--surface:#111827;--surface2:#1a2236;--accent:#00c6ff;--accent2:#7b5cff;--gold:#f0a500;--teal:#00d4aa;--text:#e8eaf0;--muted:#8892a4;--border:rgba(255,255,255,.07);--radius:14px}
+    *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+    nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 5%;background:rgba(10,15,30,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+    .nav-logo{font-family:Syne,sans-serif;font-weight:800;font-size:1.3rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}.nav-back{color:var(--muted);text-decoration:none;font-size:.88rem}.nav-back:hover{color:var(--accent)}
+    .hero{padding:8rem 5% 4rem;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}.glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,198,255,.12),transparent 70%);top:-180px;right:-100px;pointer-events:none}.hero-inner,main{max-width:1000px;margin:0 auto}.eyebrow,.card-label{font-size:.7rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--teal)}h1,h2,h3{font-family:Syne,sans-serif}h1{font-size:clamp(2.2rem,5vw,4rem);line-height:1.05;margin:.8rem 0 1rem;max-width:800px}h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.lede{color:var(--muted);font-size:1.05rem;max-width:720px}
+    main{padding:3.5rem 5% 5rem}.intro-grid,.family-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.6rem;margin-bottom:1.5rem}.card h2{font-size:1.45rem;margin:.5rem 0 .8rem}.card h3{font-size:1.05rem;margin-bottom:.3rem}.card p,.card li{color:var(--muted);font-size:.9rem}.card ul{padding-left:1.1rem}.card li{padding:.15rem 0}.card strong{color:var(--text)}.accent-blue{border-color:rgba(0,198,255,.25)}.accent-purple{border-color:rgba(123,92,255,.25)}
+    .algorithm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.2rem}.algorithm{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.1rem}.algorithm .tag{display:inline-block;font-size:.65rem;color:var(--teal);border:1px solid rgba(0,212,170,.28);border-radius:50px;padding:.1rem .5rem;margin-bottom:.6rem}.algorithm p{font-size:.82rem;margin-top:.35rem}.algorithm ul{margin-top:.45rem;font-size:.78rem}
+    .decision-list{display:grid;gap:.8rem;margin-top:1rem}.decision{display:grid;grid-template-columns:2rem 1fr;gap:.8rem;align-items:start}.decision-num{font-family:Syne,sans-serif;color:var(--accent);font-weight:800;font-size:1.15rem}.decision p{color:var(--muted);font-size:.9rem}.decision strong{color:var(--text)}
+    footer{border-top:1px solid var(--border);padding:2rem 5%;text-align:center;color:var(--muted);font-size:.82rem}footer a{color:var(--teal);text-decoration:none}
+    @media(max-width:700px){.intro-grid,.family-grid{grid-template-columns:1fr}.algorithm-grid{grid-template-columns:1fr}.nav-back{font-size:.8rem}}
+  </style>
+</head>
+<body>
+  <nav><a class="nav-logo" href="index.html">CM</a><a class="nav-back" href="index.html#artifacts">&larr; Back to portfolio</a></nav>
+  <header class="hero"><div class="glow"></div><div class="hero-inner"><div class="eyebrow">Portfolio artifact 10 &middot; Machine learning foundations</div><h1>Machine Learning <span>Algorithm Types</span></h1><p class="lede">A visual framework for how each algorithm learns, the data domain it serves, and the real-world systems it powers.</p></div></header>
+  <main>
+    <div class="intro-grid">
+      <section class="card accent-blue"><div class="card-label">The organizing idea</div><h2>Start with the data</h2><p>The first decision is whether examples have known answers. <strong>Supervised learning</strong> maps inputs to labeled outcomes; <strong>unsupervised learning</strong> discovers structure when no answer key is provided.</p></section>
+      <section class="card accent-purple"><div class="card-label">The larger landscape</div><h2>AI &rarr; ML &rarr; deep learning</h2><p>Artificial intelligence is the broad field. Machine learning learns patterns from data, while deep learning uses many-layered neural networks. Generative AI extends these models to create text, images, audio, and code.</p></section>
+    </div>
+    <section class="card accent-blue"><div class="card-label">Family 1 &middot; Learns from labeled data</div><h2>Supervised learning</h2><p>Every training example carries the correct answer, such as a price, class, or label. The model learns the mapping from input to answer, then predicts answers for new data.</p><div class="algorithm-grid">
+      <article class="algorithm"><span class="tag">Tabular data</span><h3>Linear regression</h3><p>Fits a line that minimizes error between predicted and actual values.</p><ul><li>Revenue forecasting</li><li>Home price estimation</li></ul></article>
+      <article class="algorithm"><span class="tag">Tabular data</span><h3>Decision tree</h3><p>Asks a chain of yes/no questions to separate classes or predict values.</p><ul><li>Loan approval</li><li>Patient triage</li></ul></article>
+      <article class="algorithm"><span class="tag">Tabular data</span><h3>Random forest</h3><p>Combines many decision trees by majority vote or averaged prediction.</p><ul><li>Fraud detection</li><li>Customer churn</li></ul></article>
+      <article class="algorithm"><span class="tag">Tabular data</span><h3>Gradient boosting</h3><p>Builds small trees sequentially, correcting the errors of earlier trees.</p><ul><li>Risk scoring</li><li>Search ranking</li></ul></article>
+      <article class="algorithm"><span class="tag">Tabular &middot; NLP &middot; vision</span><h3>Support vector machine</h3><p>Finds the boundary with the widest margin between classes.</p><ul><li>Spam filtering</li><li>Digit recognition</li></ul></article>
+      <article class="algorithm"><span class="tag">Computer vision</span><h3>Convolutional neural network</h3><p>Slides learned filters across images to recognize edges, textures, and objects.</p><ul><li>Medical screening</li><li>Defect inspection</li></ul></article>
+    </div></section>
+    <section class="card accent-purple"><div class="card-label">Family 2 &middot; Learns from unlabeled data</div><h2>Unsupervised learning</h2><p>No answers are provided. The model discovers groups, compressed representations, or generative structure on its own.</p><div class="algorithm-grid">
+      <article class="algorithm"><span class="tag">Tabular &middot; vision</span><h3>K-means clustering</h3><p>Assigns examples to the nearest center and moves centers until groups stabilize.</p><ul><li>Customer segmentation</li><li>Image color compression</li></ul></article>
+      <article class="algorithm"><span class="tag">Tabular &middot; vision</span><h3>Principal component analysis</h3><p>Rotates data onto axes that preserve the most variation with fewer dimensions.</p><ul><li>Feature reduction</li><li>2D visualization</li></ul></article>
+      <article class="algorithm"><span class="tag">Vision &middot; generative AI</span><h3>Autoencoder</h3><p>Compresses inputs and reconstructs them, retaining the most essential features.</p><ul><li>Anomaly detection</li><li>Image denoising</li></ul></article>
+      <article class="algorithm"><span class="tag">NLP &middot; generative AI</span><h3>Transformer</h3><p>Uses attention so each token can weigh the importance of every other token.</p><ul><li>Code generation</li><li>Summarization</li></ul></article>
+      <article class="algorithm"><span class="tag">Generative AI</span><h3>Generative adversarial network</h3><p>Trains a generator and discriminator together to produce increasingly realistic samples.</p><ul><li>Super-resolution</li><li>Synthetic data</li></ul></article>
+      <article class="algorithm"><span class="tag">Generative AI &middot; vision</span><h3>Diffusion model</h3><p>Learns to remove noise step by step, starting from random noise to generate new content.</p><ul><li>Image generation</li><li>Photo editing</li></ul></article>
+    </div></section>
+    <section class="card"><div class="card-label">How to choose</div><h2>From problem shape to model family</h2><div class="decision-list">
+      <div class="decision"><div class="decision-num">01</div><p><strong>Do labels exist?</strong> Use supervised learning when the goal is prediction; use unsupervised learning to discover groups or structure.</p></div>
+      <div class="decision"><div class="decision-num">02</div><p><strong>What is the data shape?</strong> Rows and columns favor tree ensembles. Pixels favor CNNs. Sequences of words favor transformers.</p></div>
+      <div class="decision"><div class="decision-num">03</div><p><strong>Is the output a decision or a creation?</strong> Most models discriminate between known outcomes; generative models learn the data itself so they can create new examples.</p></div>
+      <div class="decision"><div class="decision-num">04</div><p><strong>Balance clarity and power.</strong> Linear models and single trees are easier to explain. Deep networks can be more powerful but harder to interpret.</p></div>
+    </div></section>
+  </main>
+  <footer><a href="index.html#artifacts">Chaitanya Merugu</a> &middot; Machine learning foundations artifact</footer>
+</body>
+</html>
