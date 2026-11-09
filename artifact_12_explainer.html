@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Explanatory Document — Artifact 12 · Chaitanya Merugu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0a0f1e;--surface:#111827;--accent:#00c6ff;--accent2:#7b5cff;--teal:#00d4aa;--text:#e8eaf0;--muted:#a3acbb;--border:rgba(255,255,255,.08)}
+    *{margin:0;padding:0;box-sizing:border-box}body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+    nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 5%;background:rgba(10,15,30,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+    .nav-logo{font-family:Syne,sans-serif;font-weight:800;font-size:1.3rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}nav a.back{color:var(--muted);text-decoration:none;font-size:.88rem}nav a.back:hover{color:var(--accent)}
+    main{max-width:780px;margin:0 auto;padding:7rem 5% 4rem}
+    .eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--teal)}
+    h1,h2{font-family:Syne,sans-serif}h1{font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.15;margin:.6rem 0 .4rem}h2{font-size:1.2rem;margin:2.2rem 0 .6rem;padding-top:1.2rem;border-top:1px solid var(--border)}
+    .meta{color:var(--muted);font-size:.85rem}p,li{color:var(--muted);font-size:.95rem}p+p{margin-top:.7rem}strong{color:var(--text)}ul{padding-left:1.2rem;display:grid;gap:.4rem;margin-top:.5rem}
+    a{color:var(--teal)}.btn{display:inline-block;margin-top:2rem;color:var(--bg);background:linear-gradient(135deg,var(--accent),var(--accent2));padding:.55rem 1.1rem;border-radius:50px;font-weight:600;font-size:.88rem;text-decoration:none}
+    @media print{body{background:#fff;color:#111}nav,.btn{display:none}main{padding-top:0}p,li,.meta{color:#333}strong,h1,h2{color:#111}.eyebrow{color:#047857}h2{border-color:#ddd}a{color:#047857}}
+  </style>
+</head>
+<body>
+  <nav><a class="nav-logo" href="index.html">CM</a><a class="back" href="artifact_12.html">&larr; Back to the infographic</a></nav>
+  <main>
+    <div class="eyebrow">Explanatory document &middot; Portfolio artifact 12</div>
+    <h1>The Cost of Training a Large Language Model</h1>
+    <p class="meta">Chaitanya Merugu &middot; Generative AI infrastructure &middot; <a href="artifact_12.html">View the infographic</a></p>
+
+    <h2>Purpose</h2>
+    <p>The infographic explains how generative AI large language models such as GPT-4, Claude, Gemini, and Llama are trained, and what that training costs in <strong>data, compute, energy, time, and people</strong>. It is written for a mixed audience: technical readers who want concrete figures, and business readers deciding whether to build, buy, or fine-tune a model.</p>
+
+    <h2>Summary of main points</h2>
+    <ul>
+      <li><strong>Training follows seven stages:</strong> data collection, cleaning and tokenization, architecture and scaling plans, pre-training, post-training and alignment (SFT, RLHF, Constitutional AI), evaluation and red-teaming, and deployment and inference.</li>
+      <li><strong>Pre-training is the largest one-time cost.</strong> Thousands of accelerators run for weeks to months. For example, Llama 3.1 405B used 16,384 H100 GPUs for about 54 days, totaling 30.84M GPU-hours.</li>
+      <li><strong>Costs are rising quickly.</strong> Estimated compute for the final training run grew from about $930 for the original 2017 Transformer to about $191M for Gemini Ultra in 2023. Epoch AI measures the growth at roughly 2.4&times; per year.</li>
+      <li><strong>Hardware and people account for most of the cost.</strong> Hardware is 47&ndash;67% of total development cost and research staff 29&ndash;49%. Energy is only 2&ndash;6%, but power supply increasingly limits how large clusters can grow.</li>
+      <li><strong>Efficiency can matter as much as budget.</strong> DeepSeek-V3 reached frontier-level results with about 11&times; less compute than Llama 3.1 405B by using mixture-of-experts and low-precision training.</li>
+      <li><strong>Inference is the ongoing cost.</strong> A widely used model can spend more on serving users over its lifetime than it cost to train.</li>
+    </ul>
+
+    <h2>Key considerations</h2>
+    <ul>
+      <li><strong>Labs disclose different amounts.</strong> Meta and DeepSeek publish GPU-hours, token counts, and emissions. OpenAI, Google, and Anthropic disclose few details. To keep these differences visible, I gave every model a disclosure badge and distinguished reported figures from estimated ones throughout.</li>
+      <li><strong>Cost figures measure different things.</strong> DeepSeek&rsquo;s $5.6M covers only the final run, while Sam Altman&rsquo;s &ldquo;more than $100M&rdquo; for GPT-4 is a total. The infographic labels what each figure includes so readers do not compare unlike numbers.</li>
+      <li><strong>Some numbers are derived.</strong> Where energy or cost was not published, I calculated it from disclosed GPU-hours (for example, GPU-hours &times; 700&nbsp;W, or GPU-hours &times; $2). These figures are marked and explained, and they exclude cooling and data-center overhead, so they are lower bounds.</li>
+      <li><strong>Practical implication:</strong> few organizations need to pre-train a model. Fine-tuning or retrieval-augmented generation on an existing model captures most of the business value at a small fraction of the cost.</li>
+    </ul>
+
+    <h2>Design rationale</h2>
+    <ul>
+      <li><strong>A different format from Artifact 11.</strong> Artifact 11 was a slide presentation. This one is a single scrolling, data-driven infographic, which demonstrates data visualization, quantitative research, and source evaluation rather than conceptual explanation.</li>
+      <li><strong>Narrative structure.</strong> The page moves from the process (how training works) to the resources (what it consumes), the numbers (how much), the model profiles (who spends what), and the takeaways (so what), so each section builds on the previous one.</li>
+      <li><strong>Headline numbers first.</strong> Four stat tiles give the main point in seconds, with relatable comparisons such as &ldquo;3,500 years on one GPU&rdquo; and &ldquo;2,000 US homes for a year&rdquo; for non-technical readers.</li>
+      <li><strong>Simple, honest charts.</strong> Each chart is a horizontal bar chart in a single color, with model names written directly on the bars, so no color legend is needed. Bars use a linear scale so the true size of the cost increase is visible. A hatched pattern, which does not rely on color alone, marks estimates versus disclosed values.</li>
+      <li><strong>Icons and meters.</strong> Each pipeline stage has an icon and a five-step meter showing how much compute it uses, so a reader can see at a glance that pre-training and inference are the heavy stages.</li>
+      <li><strong>Accessibility.</strong> The page has high-contrast text, chart descriptions for screen readers, keyboard-focusable bars with tooltips, a full data table of every figure, a responsive layout for mobile, and a print stylesheet.</li>
+      <li><strong>Consistency with the portfolio.</strong> It uses the same typography, colors, and navigation as the rest of the portfolio, so it reads as part of one professional body of work.</li>
+    </ul>
+
+    <h2>Sources</h2>
+    <p>Stanford AI Index 2024; Epoch AI (Cottier et al., 2024, and the Notable AI Models database); Meta&rsquo;s LLaMA, Llama 2, and Llama 3 papers; the DeepSeek-V3 Technical Report; Patterson et al. (2021); the OpenAI GPT-4 Technical Report; the Google Gemini report; Anthropic&rsquo;s Constitutional AI research and Claude model cards; Wolfram (2023), &ldquo;What Is ChatGPT Doing and Why Does It Work?&rdquo;; and US EIA residential energy data. Full links are on the <a href="artifact_12.html#sources">infographic&rsquo;s sources section</a>.</p>
+
+    <a class="btn" href="artifact_12.html">View the infographic &rarr;</a>
+  </main>
+</body>
+</html>
