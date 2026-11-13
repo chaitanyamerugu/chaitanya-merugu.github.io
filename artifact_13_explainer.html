@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Explanatory Document — Artifact 13 · Chaitanya Merugu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0a0f1e;--surface:#111827;--accent:#00c6ff;--accent2:#7b5cff;--teal:#00d4aa;--text:#e8eaf0;--muted:#a3acbb;--border:rgba(255,255,255,.08)}
+    *{margin:0;padding:0;box-sizing:border-box}body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+    nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 5%;background:rgba(10,15,30,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+    .nav-logo{font-family:Syne,sans-serif;font-weight:800;font-size:1.3rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}nav a.back{color:var(--muted);text-decoration:none;font-size:.88rem}nav a.back:hover{color:var(--accent)}
+    main{max-width:780px;margin:0 auto;padding:7rem 5% 4rem}
+    .eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--teal)}
+    h1,h2{font-family:Syne,sans-serif}h1{font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.15;margin:.6rem 0 .4rem}h2{font-size:1.2rem;margin:2.2rem 0 .6rem;padding-top:1.2rem;border-top:1px solid var(--border)}
+    .meta{color:var(--muted);font-size:.85rem}p,li{color:var(--muted);font-size:.95rem}p+p{margin-top:.7rem}strong{color:var(--text)}ul{padding-left:1.2rem;display:grid;gap:.4rem;margin-top:.5rem}
+    a{color:var(--teal)}.btn{display:inline-block;margin-top:2rem;color:var(--bg);background:linear-gradient(135deg,var(--accent),var(--accent2));padding:.55rem 1.1rem;border-radius:50px;font-weight:600;font-size:.88rem;text-decoration:none}
+    @media print{body{background:#fff;color:#111}nav,.btn{display:none}main{padding-top:0}p,li,.meta{color:#333}strong,h1,h2{color:#111}.eyebrow{color:#047857}h2{border-color:#ddd}a{color:#047857}}
+  </style>
+</head>
+<body>
+  <nav><a class="nav-logo" href="index.html">CM</a><a class="back" href="artifact_13.html">&larr; Back to the explainer</a></nav>
+  <main>
+    <div class="eyebrow">Explanatory document &middot; Portfolio artifact 13</div>
+    <h1>Opening the Black Box: Explainable AI for Large Language Models</h1>
+    <p class="meta">Chaitanya Merugu &middot; Responsible AI &middot; <a href="artifact_13.html">View the interactive explainer</a></p>
+
+    <h2>Summary</h2>
+    <p>This interactive explainer covers <strong>Explainable AI (XAI)</strong>: the methods that let people understand why a model such as GPT, Claude, Gemini, or Llama produced an output. It defines XAI and explains why transparency matters to four audiences: end users, professionals, engineers, and regulators. It then sets out six obstacles: the scale of models with hundreds of billions of parameters, superposition (single neurons represent many concepts), self-explanations that are not faithful to the model&rsquo;s actual reasoning, the limits of attention maps, opaque and biased training data, and regulations (the EU AI Act, GDPR, US credit law, and NIST&rsquo;s AI RMF) that require explanations current tools cannot always deliver. A validation section shows how hold-out testing, benchmarks, bias audits, red-teaming, and production monitoring, together with metrics such as precision, recall, calibration, and fairness gaps, show <em>how often</em> and <em>for whom</em> a model is reliable. A final section maps current techniques from model cards to mechanistic interpretability and highlights recent work by Anthropic (sparse-autoencoder features, circuit tracing), OpenAI (automated neuron explanations, chain-of-thought monitoring), Google DeepMind (Integrated Gradients, LIT, Gemma Scope), and Meta (Captum, open-weight models).</p>
+    <p>The central message is that <strong>explainability, validation, and metrics are complementary and none is enough alone</strong>. An explanation without validation can be persuasive and wrong, as research showing that models often omit what really drove their answers demonstrates. A strong accuracy score without an explanation hides <em>which</em> mistakes a model makes and why. Trust comes from combining all three: knowing why a model decided, confirming the decision holds up on new data and across groups, and measuring the errors that matter most for the use case.</p>
+
+    <h2>Key considerations</h2>
+    <ul>
+      <li><strong>Illustrative versus sourced content.</strong> The triage demo and the metrics lab use illustrative or simulated data, and both are labeled as such on the page. Every statistic in the challenges and solutions sections comes from a published source listed in the references.</li>
+      <li><strong>Choosing a metric is a values decision.</strong> The metrics lab uses an emergency triage scenario because a missed case there is far worse than a false alarm. This makes it clear why recall, not accuracy, is the metric that matters there.</li>
+      <li><strong>Explanations are claims to verify.</strong> The demo pairs each explanation method with its main limitation, so readers learn to cross-check a model&rsquo;s self-explanation rather than accept it.</li>
+      <li><strong>Openness affects auditability.</strong> Open-weight models such as Llama and Gemma allow independent interpretability research. For closed models, outsiders must rely on the developer&rsquo;s own disclosures.</li>
+    </ul>
+
+    <h2>Design rationale</h2>
+    <ul>
+      <li><strong>A different skill set from earlier artifacts.</strong> Artifact 11 was a slide presentation and Artifact 12 a data infographic. This artifact is an <em>interactive explainer</em> that shows front-end interaction design and responsible-AI evaluation skills: readers learn by doing, not only by reading.</li>
+      <li><strong>Two hands-on demos.</strong> The first lets readers switch between feature attribution, chain-of-thought, and counterfactual explanations of the same decision, which makes the abstract point that different methods reveal different things concrete. The second is a metrics lab where a threshold slider updates a histogram, a confusion matrix, and four metrics live, so readers see that improving recall costs precision.</li>
+      <li><strong>Narrative structure.</strong> The page moves from <em>what and why</em> to <em>what makes it hard</em>, <em>how we measure trust</em>, <em>what industry is doing</em>, and <em>what to take away</em>, matching the four required areas of the assignment.</li>
+      <li><strong>Visual encoding.</strong> In the histogram, the two patient groups use a cyan and amber pair that I checked with a color-vision-deficiency validator. They also carry a legend, so identity never depends on color alone. &ldquo;Depth&rdquo; meters on the technique cards show how far each method looks inside the model, from documentation to internal circuits.</li>
+      <li><strong>Accessibility.</strong> The page has keyboard-operable tabs (arrow keys) and slider, focusable chart bars and words with tooltips, a screen-reader description of the chart, live-updating results announced to assistive technology, a full metrics reference table, a responsive mobile layout, and a print stylesheet.</li>
+      <li><strong>Consistency with the portfolio.</strong> It uses the same typography, colors, and navigation as the rest of the portfolio.</li>
+    </ul>
+
+    <h2>Sources</h2>
+    <p>Anthropic, <em>Scaling Monosemanticity</em> (2024), <em>Tracing the Thoughts of a Large Language Model</em> (2025), and <em>Reasoning Models Don&rsquo;t Always Say What They Think</em> (2025); OpenAI, <em>Language Models Can Explain Neurons in Language Models</em> (2023), <em>Extracting Concepts from GPT-4</em> (2024), chain-of-thought monitoring research (2025), and the GPT-4 Technical Report; Korbak et al., <em>Chain of Thought Monitorability</em> (2025); Google DeepMind, <em>Gemma Scope</em> (2024); Sundararajan et al., <em>Integrated Gradients</em> (2017); Google PAIR&rsquo;s Learning Interpretability Tool; Mitchell et al., <em>Model Cards for Model Reporting</em> (2019); Meta&rsquo;s Captum and the Llama 3 paper; Jain &amp; Wallace, <em>Attention is not Explanation</em> (2019); Stanford CRFM&rsquo;s HELM; NIST AI RMF 1.0; the EU AI Act; GDPR; and CFPB Circular 2022-03. Full links are in the <a href="artifact_13.html#sources">explainer&rsquo;s sources section</a>.</p>
+
+    <a class="btn" href="artifact_13.html">View the interactive explainer &rarr;</a>
+  </main>
+</body>
+</html>

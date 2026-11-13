@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Artifact 13 — Opening the Black Box: Explainable AI · Chaitanya Merugu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0a0f1e;--surface:#111827;--surface2:#1a2236;--accent:#00c6ff;--accent2:#7b5cff;--gold:#f0a500;--teal:#00d4aa;--text:#e8eaf0;--muted:#8f99ab;--border:rgba(255,255,255,.07);--grid:rgba(255,255,255,.08);--pos:#0a9ad0;--neg:#c88400;--radius:14px}
+    *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden}
+    nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 5%;background:rgba(10,15,30,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+    .nav-logo{font-family:Syne,sans-serif;font-weight:800;font-size:1.3rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}.nav-links{display:flex;gap:1.4rem}.nav-links a{color:var(--muted);text-decoration:none;font-size:.88rem}.nav-links a:hover{color:var(--accent)}
+    .hero{padding:8rem 5% 3.5rem;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}.glow{position:absolute;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(123,92,255,.14),transparent 70%);top:-200px;right:-120px;pointer-events:none}
+    .wrap{max-width:1100px;margin:0 auto;min-width:0}
+    .eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--teal)}
+    h1,h2,h3{font-family:Syne,sans-serif}h1{font-size:clamp(2.2rem,5vw,4rem);line-height:1.05;margin:.8rem 0 1rem;max-width:880px}h1 span,h2 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    h2{font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.15;margin:.4rem 0 .8rem}h3{font-size:1rem;margin-bottom:.25rem}
+    .lede{color:var(--muted);font-size:1.05rem;max-width:760px}p,li,td{color:var(--muted);font-size:.9rem}strong{color:var(--text)}
+    section.block{padding:4rem 5%;border-bottom:1px solid var(--border)}.section-intro{max-width:780px;margin-bottom:2rem}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.3rem}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+    .grid2>*,.grid3>*,.grid4>*{min-width:0}
+    .k{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:.8rem}
+    .icon{width:32px;height:32px;margin-bottom:.5rem}
+    .note{font-size:.76rem;color:var(--muted);margin-top:.9rem}
+    /* hero */
+    .define{display:grid;grid-template-columns:1.25fr 1fr;gap:1.5rem;margin-top:2.4rem;align-items:stretch}
+    .define .card{display:flex;flex-direction:column;justify-content:center}
+    .quote{font-family:Syne,sans-serif;font-size:1.25rem;line-height:1.35;color:var(--text)}
+    .bb{display:flex;align-items:center;gap:.6rem;font-size:.8rem;color:var(--muted);margin-top:1rem;flex-wrap:wrap}
+    .bb .box{padding:.45rem .7rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text)}
+    .bb .box.dark{background:#05080f;border-color:rgba(123,92,255,.4);color:var(--accent2)}
+    .bb .box.open{border-color:rgba(0,212,170,.4);color:var(--teal)}
+    .why{display:grid;gap:.6rem}
+    .why div{display:grid;grid-template-columns:1.6rem 1fr;gap:.5rem;font-size:.86rem;color:var(--muted)}
+    .why b{font-family:Syne,sans-serif;color:var(--accent)}
+    .audiences{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1.4rem}
+    .aud{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem}
+    .aud h3{font-size:.9rem}.aud p{font-size:.8rem}
+    /* challenges */
+    .ch{border-top:3px solid var(--c,var(--accent))}
+    .ch .stat{font-family:Syne,sans-serif;font-weight:800;font-size:1.5rem;color:var(--text);margin-top:.6rem;line-height:1.1}
+    .ch .src{font-size:.7rem;color:var(--muted);opacity:.8}
+    .reg{margin-top:1.4rem}
+    .reg-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:.8rem}
+    .reg-item{border-left:2px solid var(--accent2);padding-left:.8rem}
+    .reg-item h3{font-size:.86rem}.reg-item p{font-size:.78rem}
+    /* demo */
+    .demo{display:grid;grid-template-columns:1fr 1.15fr;gap:1.2rem}
+    .demo>*{min-width:0}
+    .input-box{font-size:1rem;line-height:2.1;color:var(--text)}
+    .tok{padding:.15rem .25rem;border-radius:4px;transition:background .25s,box-shadow .25s}
+    .pred{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding:.7rem .9rem;border-radius:10px;background:var(--surface2)}
+    .pred .lbl{font-weight:600;color:var(--text)}.pred .p{font-family:Syne,sans-serif;font-size:1.4rem;font-weight:800}
+    .tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+    .tabs button{background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:50px;padding:.4rem .9rem;font:inherit;font-size:.82rem;cursor:pointer}
+    .tabs button[aria-selected=true]{color:var(--bg);background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;font-weight:600}
+    .tabs button:focus-visible,.sl:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .panel h3{font-size:1.05rem}.panel .who{font-size:.72rem;color:var(--teal);margin:.1rem 0 .6rem}
+    .panel ol{padding-left:1.2rem;display:grid;gap:.3rem;margin-top:.4rem}
+    .caveat{font-size:.8rem;color:var(--text);background:rgba(240,165,0,.08);border:1px solid rgba(240,165,0,.25);border-radius:8px;padding:.55rem .75rem;margin-top:1rem}
+    .caveat b{color:var(--gold)}
+    .scale{display:flex;align-items:center;gap:.5rem;font-size:.72rem;color:var(--muted);margin-top:.8rem}
+    .scale i{display:inline-block;width:120px;height:8px;border-radius:4px;background:linear-gradient(90deg,rgba(0,198,255,.05),rgba(0,198,255,.75))}
+    .cf-row{display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.84rem}
+    .cf-row:last-child{border-bottom:none}.cf-row .d{font-family:Syne,sans-serif;font-weight:700;color:var(--text)}
+    /* metrics lab */
+    .lab{display:grid;grid-template-columns:1.35fr 1fr;gap:1.2rem}.lab>*{min-width:0}
+    .card svg{width:100%;height:auto;display:block;overflow:visible}.card svg.icon{width:32px;height:32px}
+    .legend{display:flex;gap:1.2rem;flex-wrap:wrap;font-size:.76rem;color:var(--muted);margin-top:.4rem}
+    .sw{display:inline-block;width:14px;height:10px;border-radius:2px;vertical-align:middle;margin-right:.35rem}
+    .slider-row{display:flex;align-items:center;gap:.8rem;margin-top:.8rem;font-size:.84rem;color:var(--muted)}
+    .slider-row input{flex:1;accent-color:var(--accent)}
+    .slider-row output{font-family:Syne,sans-serif;font-weight:700;color:var(--text);min-width:2.6rem;text-align:right}
+    .cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:3px;font-size:.78rem;margin-top:.3rem}
+    .cm .h{color:var(--muted);text-align:center;padding:.3rem;font-size:.7rem}
+    .cm .rh{color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding-right:.5rem;font-size:.7rem;text-align:right}
+    .cm .c{border-radius:6px;padding:.6rem .5rem;text-align:center;background:var(--surface2)}
+    .cm .c .n{font-family:Syne,sans-serif;font-size:1.5rem;font-weight:800;color:var(--text);display:block;line-height:1.1}
+    .cm .c .t{font-size:.7rem;color:var(--muted)}
+    .cm .c.ok{box-shadow:inset 0 0 0 1px rgba(0,212,170,.35)}.cm .c.bad{box-shadow:inset 0 0 0 1px rgba(240,165,0,.35)}
+    .mets{display:grid;gap:.55rem;margin-top:1rem}
+    .met{display:grid;grid-template-columns:5.5rem 1fr 3rem;gap:.6rem;align-items:center;font-size:.8rem}
+    .met .bar{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden}.met .bar i{display:block;height:100%;border-radius:0 4px 4px 0;background:var(--accent);transition:width .2s}
+    .met .v{font-variant-numeric:tabular-nums;color:var(--text);text-align:right;font-weight:500}
+    .met .nm{color:var(--text)}
+    .verdict{font-size:.8rem;color:var(--text);background:var(--surface2);border-radius:8px;padding:.55rem .75rem;margin-top:.9rem;min-height:3.2rem}
+    .pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:.7rem;counter-reset:s;margin-top:1.6rem}
+    .pipeline>*{min-width:0}
+    .stage{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem .9rem;position:relative}
+    .stage::before{counter-increment:s;content:"0" counter(s);font-family:Syne,sans-serif;font-weight:800;color:var(--accent);font-size:.95rem;display:block}
+    .stage:not(:last-child)::after{content:"\2192";position:absolute;right:-.62rem;top:1.1rem;color:var(--accent2);font-weight:700}
+    .stage h3{font-size:.9rem;margin-top:.3rem}.stage p{font-size:.78rem;margin-top:.3rem}
+    .metric-table{margin-top:1.6rem}
+    .table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+    table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:.65rem .9rem;text-align:left;border-bottom:1px solid var(--border);font-size:.82rem;vertical-align:top}th{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;background:var(--surface2)}td:first-child{color:var(--text);font-weight:500;white-space:nowrap}tr:last-child td{border-bottom:none}
+    /* solutions */
+    .tech-map{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+    .tech{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;display:flex;flex-direction:column}
+    .tech .lvl{font-size:.64rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+    .tech h3{margin:.2rem 0 .3rem}.tech p{font-size:.8rem;flex:1}
+    .depth{display:flex;gap:3px;margin-top:.8rem}.depth i{flex:1;height:6px;border-radius:3px;background:var(--surface2)}.depth i.on{background:var(--c)}
+    .depth-lbl{font-size:.68rem;color:var(--muted);margin-top:.3rem}
+    .labs{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.4rem}
+    .labcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.3rem}
+    .labcard .org{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
+    .labcard h3{font-size:1.1rem;margin:.15rem 0 .6rem}
+    .labcard ul{list-style:none;display:grid;gap:.55rem}
+    .labcard li{font-size:.82rem;display:grid;grid-template-columns:3.2rem 1fr;gap:.6rem}
+    .labcard li .yr{font-family:Syne,sans-serif;font-weight:700;color:var(--accent);font-size:.8rem}
+    /* takeaways */
+    .takeaways{display:grid;grid-template-columns:1fr 1fr;gap:1rem 2rem}
+    .tk{display:grid;grid-template-columns:2.2rem 1fr;gap:.6rem}.tk-num{font-family:Syne,sans-serif;color:var(--accent);font-weight:800;font-size:1.15rem}
+    .trust{display:flex;align-items:stretch;gap:.6rem;margin-top:2rem;flex-wrap:wrap}
+    .trust div{flex:1;min-width:150px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.9rem .6rem;font-size:.8rem;color:var(--muted)}
+    .trust div b{display:block;font-family:Syne,sans-serif;color:var(--text);font-size:.95rem;margin-bottom:.15rem}
+    .trust .plus{flex:0;min-width:0;background:none;border:none;display:flex;align-items:center;color:var(--accent2);font-weight:800;font-size:1.2rem;padding:0}
+    .trust .res{background:linear-gradient(135deg,rgba(0,198,255,.12),rgba(123,92,255,.18));border-color:rgba(123,92,255,.4)}
+    .sources{columns:2;column-gap:2rem;padding-left:1.1rem}.sources li{font-size:.78rem;padding:.15rem 0;break-inside:avoid}.sources a{color:var(--teal);text-decoration:none}.sources a:hover{text-decoration:underline}
+    .cta{display:inline-block;margin-top:1.4rem;color:var(--bg);background:linear-gradient(135deg,var(--accent),var(--accent2));padding:.6rem 1.2rem;border-radius:50px;font-weight:600;font-size:.88rem;text-decoration:none}
+    #tip{position:fixed;pointer-events:none;z-index:20;background:#0d1424;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:.55rem .7rem;font-size:.78rem;max-width:260px;box-shadow:0 8px 24px rgba(0,0,0,.45);opacity:0;transition:opacity .12s}
+    #tip b{display:block;color:var(--text)}#tip .s{color:var(--muted)}
+    .hit:focus{outline:none}.hit:focus .hl,.hit:hover .hl{opacity:1}
+    .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+    footer{padding:2rem 5%;text-align:center;color:var(--muted);font-size:.82rem}footer a{color:var(--teal);text-decoration:none}
+    @media(max-width:1000px){.grid4,.audiences,.reg-row,.tech-map{grid-template-columns:1fr 1fr}.pipeline{grid-template-columns:1fr 1fr}.stage:not(:last-child)::after{display:none}.grid3{grid-template-columns:1fr 1fr}}
+    @media(max-width:780px){.define,.demo,.lab,.grid2,.labs,.takeaways{grid-template-columns:1fr}.sources{columns:1}.nav-links a:not(:first-child){display:none}}
+    @media(max-width:540px){.grid4,.grid3,.audiences,.reg-row,.tech-map,.pipeline{grid-template-columns:1fr}}
+    @media print{nav,#tip{display:none}.hero{padding-top:2rem}section.block{break-inside:avoid-page}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  </style>
+</head>
+<body>
+  <nav><a class="nav-logo" href="index.html">CM</a><div class="nav-links"><a href="index.html#artifacts">&larr; Back to portfolio</a><a href="artifact_13_explainer.html">Explanatory document</a></div></nav>
+  <div id="tip" role="tooltip"></div>
+
+  <!-- HERO: WHAT XAI IS AND WHY IT MATTERS -->
+  <header class="hero"><div class="glow"></div><div class="wrap">
+    <div class="eyebrow">Portfolio artifact 13 &middot; Responsible AI &middot; Interactive explainer</div>
+    <h1>Opening the black box: <span>explainable AI for large language models</span></h1>
+    <p class="lede">Models such as GPT, Claude, Gemini, and Llama now help with medical, financial, and legal decisions, yet nobody can fully explain how they reach an answer. This explainer covers what explainability means, why it is hard, how validation and metrics show whether a model can be trusted, and what the major labs are doing about it. It includes two hands-on demos.</p>
+
+    <div class="define">
+      <div class="card">
+        <div class="eyebrow">Definition</div>
+        <p class="quote">Explainable AI (XAI) is the set of methods that let people understand <em>why</em> an AI system produced a particular output, and decide how far to trust it.</p>
+        <div class="bb" aria-label="Diagram: input goes into an opaque model and produces an output; XAI adds an explanation alongside the output">
+          <span class="box">Input</span>&rarr;<span class="box dark">Model (billions of parameters)</span>&rarr;<span class="box">Output</span>+<span class="box open">Explanation</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Why transparency is critical</div>
+        <div class="why" style="margin-top:.7rem">
+          <div><b>1</b><span><strong>Trust:</strong> people rely on a model appropriately only when they understand its reasoning and its limits.</span></div>
+          <div><b>2</b><span><strong>Safety:</strong> explanations expose errors, bias, and shortcuts before they cause harm.</span></div>
+          <div><b>3</b><span><strong>Accountability:</strong> laws in finance, healthcare, and the EU increasingly require decisions to be explained.</span></div>
+          <div><b>4</b><span><strong>Improvement:</strong> engineers can only fix what they can see.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="audiences" role="list">
+      <div class="aud" role="listitem"><h3>Patients &amp; customers</h3><p>&ldquo;Why was my loan denied?&rdquo; They need a plain-language reason they can act on.</p></div>
+      <div class="aud" role="listitem"><h3>Doctors, lawyers, analysts</h3><p>&ldquo;Should I act on this?&rdquo; They need to know the evidence behind the answer and how confident the model is.</p></div>
+      <div class="aud" role="listitem"><h3>Engineers &amp; researchers</h3><p>&ldquo;What is the model actually computing?&rdquo; They need internal mechanisms for debugging.</p></div>
+      <div class="aud" role="listitem"><h3>Regulators &amp; auditors</h3><p>&ldquo;Is it fair, safe, and compliant?&rdquo; They need documentation, test results, and audit trails.</p></div>
+    </div>
+  </div></header>
+
+  <!-- CHALLENGES -->
+  <section class="block" id="challenges"><div class="wrap">
+    <div class="eyebrow">Part 1 &middot; Challenges in explainability</div>
+    <h2>Why LLMs are <span>so hard to explain</span></h2>
+    <p class="lede section-intro">An LLM&rsquo;s &ldquo;reasoning&rdquo; is spread across billions of numbers that interact in non-linear ways. No single part holds the answer, and each of the obstacles below makes simple explanations unreliable.</p>
+    <div class="grid3">
+      <article class="card ch" style="--c:#00c6ff">
+        <svg class="icon" viewBox="0 0 32 32" fill="none" stroke="#00c6ff" stroke-width="1.8" aria-hidden="true"><circle cx="6" cy="8" r="2.5"/><circle cx="6" cy="24" r="2.5"/><circle cx="16" cy="16" r="2.5"/><circle cx="26" cy="8" r="2.5"/><circle cx="26" cy="24" r="2.5"/><path d="M8.5 8l5 7M8.5 24l5-7M18.5 16l5-7M18.5 16l5 7M8.5 8h15M8.5 24h15"/></svg>
+        <h3>Scale &amp; complexity</h3>
+        <p>Decisions emerge from interactions among billions of parameters across dozens of layers, so no single component explains an output.</p>
+        <div class="stat">405 billion</div><div class="src">parameters in Meta&rsquo;s Llama 3.1 405B, one of the largest open-weight models</div>
+      </article>
+      <article class="card ch" style="--c:#7b5cff">
+        <svg class="icon" viewBox="0 0 32 32" fill="none" stroke="#7b5cff" stroke-width="1.8" aria-hidden="true"><circle cx="16" cy="16" r="5"/><path d="M16 4v7M16 21v7M4 16h7M21 16h7M7.5 7.5l5 5M19.5 19.5l5 5M24.5 7.5l-5 5M12.5 19.5l-5 5"/></svg>
+        <h3>Superposition</h3>
+        <p>Single neurons are &ldquo;polysemantic&rdquo;: one neuron can respond to unrelated concepts, so inspecting neurons one at a time is misleading.</p>
+        <div class="stat">34 million</div><div class="src">concepts (&ldquo;features&rdquo;) Anthropic extracted from one layer of Claude 3 Sonnet, 2024</div>
+      </article>
+      <article class="card ch" style="--c:#f0a500">
+        <svg class="icon" viewBox="0 0 32 32" fill="none" stroke="#f0a500" stroke-width="1.8" aria-hidden="true"><path d="M5 9h16l-4-4M27 23H11l4 4"/><path d="M5 23h2M27 9h-2" stroke-dasharray="2 2"/></svg>
+        <h3>Unfaithful explanations</h3>
+        <p>When asked, a model produces a plausible explanation after the fact, and it may not describe how the answer was really computed.</p>
+        <div class="stat">25%</div><div class="src">of the time Claude 3.7 Sonnet mentioned a hint it had used to reach its answer (Anthropic, 2025)</div>
+      </article>
+      <article class="card ch" style="--c:#00d4aa">
+        <svg class="icon" viewBox="0 0 32 32" fill="none" stroke="#00d4aa" stroke-width="1.8" aria-hidden="true"><rect x="5" y="5" width="22" height="22" rx="3"/><path d="M5 12h22M5 19h22M12 5v22M19 5v22"/><rect x="19" y="19" width="8" height="8" fill="rgba(0,212,170,.3)"/></svg>
+        <h3>Attention isn&rsquo;t the whole story</h3>
+        <p>Attention heatmaps show where a model &ldquo;looked&rdquo;, but researchers have shown that different attention patterns can give the same prediction. Attention alone is not a reliable explanation.</p>
+        <div class="stat">Jain &amp; Wallace</div><div class="src">&ldquo;Attention is not Explanation,&rdquo; NAACL 2019</div>
+      </article>
+      <article class="card ch" style="--c:#00c6ff">
+        <svg class="icon" viewBox="0 0 32 32" fill="none" stroke="#00c6ff" stroke-width="1.8" aria-hidden="true"><ellipse cx="16" cy="7" rx="10" ry="3.5"/><path d="M6 7v18c0 2 4.5 3.5 10 3.5s10-1.5 10-3.5V7"/><path d="M12 17l8 6M20 17l-8 6"/></svg>
+        <h3>Data quality &amp; bias</h3>
+        <p>Models absorb the gaps and biases in trillions of training tokens, and most labs do not fully disclose that data, so the source of a biased output is hard to trace.</p>
+        <div class="stat">15.6 trillion</div><div class="src">training tokens for Llama 3.1, far too many for any human to review</div>
+      </article>
+      <article class="card ch" style="--c:#7b5cff">
+        <svg class="icon" viewBox="0 0 32 32" fill="none" stroke="#7b5cff" stroke-width="1.8" aria-hidden="true"><path d="M16 4v24M8 28h16M6 10h20M6 10l-3 8a4 4 0 008 0zM26 10l-3 8a4 4 0 008 0z"/></svg>
+        <h3>Regulation &amp; accountability</h3>
+        <p>Laws require explanations that today&rsquo;s tools cannot always give, and closed models limit what outside auditors can inspect.</p>
+        <div class="stat">Closed weights</div><div class="src">GPT and Claude internals can be studied only by their developers</div>
+      </article>
+    </div>
+
+    <div class="card reg">
+      <div class="eyebrow">The regulatory landscape</div>
+      <div class="reg-row">
+        <div class="reg-item"><h3>EU AI Act (2024)</h3><p>Transparency, documentation, and human-oversight duties for general-purpose and high-risk AI, phased in from 2025.</p></div>
+        <div class="reg-item"><h3>GDPR, Art. 22 &amp; 13&ndash;15</h3><p>People subject to automated decisions are entitled to &ldquo;meaningful information about the logic involved.&rdquo;</p></div>
+        <div class="reg-item"><h3>US credit law (ECOA)</h3><p>The CFPB says lenders must give specific reasons for a denial, even if a complex algorithm made the decision (Circular 2022-03).</p></div>
+        <div class="reg-item"><h3>NIST AI RMF 1.0 (2023)</h3><p>Lists &ldquo;explainable and interpretable&rdquo; as one of seven characteristics of trustworthy AI.</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- DEMO 1: EXPLAINING A DECISION -->
+  <section class="block" id="demo"><div class="wrap">
+    <div class="eyebrow">Interactive demo 1 &middot; One decision, three explanations</div>
+    <h2>How would a model <span>explain this triage call?</span></h2>
+    <p class="lede section-intro">An AI assistant flags an emergency-room note as urgent. Switch between three common explanation methods to see what each one reveals and where each one falls short. <em>The example and its values are illustrative and were not produced by a real clinical model.</em></p>
+    <div class="demo">
+      <div class="card">
+        <div class="eyebrow">Model input</div>
+        <p class="input-box" id="note" style="margin-top:.6rem"></p>
+        <div class="scale" id="scale" aria-hidden="true">low influence <i></i> high influence</div>
+        <div class="pred"><span class="lbl">Prediction: Urgent, possible cardiac event</span><span class="p">92%</span></div>
+      </div>
+      <div class="card">
+        <div class="tabs" role="tablist" aria-label="Explanation method">
+          <button role="tab" id="t-attr" aria-controls="p-attr" aria-selected="true">Feature attribution</button>
+          <button role="tab" id="t-cot" aria-controls="p-cot" aria-selected="false" tabindex="-1">Chain-of-thought</button>
+          <button role="tab" id="t-cf" aria-controls="p-cf" aria-selected="false" tabindex="-1">Counterfactual</button>
+        </div>
+        <div class="panel" role="tabpanel" id="p-attr" aria-labelledby="t-attr">
+          <h3>Which words mattered most?</h3>
+          <div class="who">Methods: Integrated Gradients, SHAP, LIME &middot; Tools: Captum (Meta), LIT (Google)</div>
+          <p>Each word is shaded by how much it pushed the score toward &ldquo;urgent.&rdquo; Chest pain radiating to the left arm and shortness of breath dominate. Hover over or tab to a word to see its score.</p>
+          <div class="caveat"><b>Limitation:</b> attribution shows <em>which inputs</em> mattered, not <em>how</em> the model combined them, and different attribution methods can disagree.</div>
+        </div>
+        <div class="panel" role="tabpanel" id="p-cot" aria-labelledby="t-cot" hidden>
+          <h3>The model explains itself, step by step</h3>
+          <div class="who">Used in: OpenAI o-series, Claude extended thinking, Gemini thinking models</div>
+          <ol>
+            <li>Chest pain that radiates to the left arm is a classic sign of a heart attack.</li>
+            <li>Shortness of breath and sweating point the same way.</li>
+            <li>Age 58 and a smoking history increase the risk.</li>
+            <li>Conclusion: treat as urgent and rule out a heart attack first.</li>
+          </ol>
+          <div class="caveat"><b>Limitation:</b> the stated reasoning reads well but may not be <em>faithful</em>. Studies by Anthropic found models often leave out factors that actually drove their answer.</div>
+        </div>
+        <div class="panel" role="tabpanel" id="p-cf" aria-labelledby="t-cf" hidden>
+          <h3>What would change the answer?</h3>
+          <div class="who">Methods: counterfactual tests, ablation, input perturbation</div>
+          <div class="cf-row"><span>Remove &ldquo;radiating to left arm&rdquo;</span><span class="d">92% &rarr; 64%</span></div>
+          <div class="cf-row"><span>Remove &ldquo;shortness of breath&rdquo;</span><span class="d">92% &rarr; 78%</span></div>
+          <div class="cf-row"><span>Change age 58 &rarr; 25</span><span class="d">92% &rarr; 83%</span></div>
+          <div class="cf-row"><span>Change patient sex (bias check)</span><span class="d">92% &rarr; 91%</span></div>
+          <div class="caveat"><b>Limitation:</b> counterfactuals are intuitive and good for spotting bias, but testing many edits is slow, and the edited inputs can look unrealistic to the model.</div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Takeaway: no single method is complete. Practitioners combine several, and treat a model&rsquo;s own explanation as a claim to verify, not as ground truth.</p>
+  </div></section>
+
+  <!-- VALIDATION & METRICS -->
+  <section class="block" id="metrics"><div class="wrap">
+    <div class="eyebrow">Part 2 &middot; Validation &amp; performance metrics</div>
+    <h2>Trust is measured, <span>not assumed</span></h2>
+    <p class="lede section-intro">Explanations show <em>why</em> a model answered. Validation shows <em>how often it is right</em>, for whom, and under what conditions. Try the demo below: moving the decision threshold changes which mistakes the model makes.</p>
+
+    <div class="lab">
+      <div class="card">
+        <div class="eyebrow">Interactive demo 2 &middot; The metrics lab</div>
+        <h3 style="margin-top:.4rem">Model risk scores for 200 test patients</h3>
+        <p style="font-size:.8rem">Patients scoring at or above the threshold are flagged as urgent. Hover over a bar for its counts. (Simulated data.)</p>
+        <svg id="hist" role="img" aria-labelledby="histDesc"></svg>
+        <p class="sr" id="histDesc">Histogram of model risk scores from 0 to 1. Truly urgent patients cluster at high scores and non-urgent patients at low scores, with overlap between 0.3 and 0.7. A vertical line marks the decision threshold.</p>
+        <div class="legend"><span><i class="sw" style="background:var(--pos)"></i>Truly urgent (50)</span><span><i class="sw" style="background:var(--neg)"></i>Not urgent (150)</span><span><i class="sw" style="background:var(--text);width:2px"></i>Threshold</span></div>
+        <div class="slider-row"><label for="thr">Decision threshold</label><input class="sl" type="range" id="thr" min="0.05" max="0.95" step="0.05" value="0.5"/><output id="thrOut" for="thr">0.50</output></div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Confusion matrix</div>
+        <div class="cm" aria-live="polite">
+          <div></div><div class="h">Flagged urgent</div><div class="h">Not flagged</div>
+          <div class="rh">Truly urgent</div><div class="c ok"><span class="n" id="tp">0</span><span class="t">True positives</span></div><div class="c bad"><span class="n" id="fn">0</span><span class="t">Missed cases</span></div>
+          <div class="rh">Not urgent</div><div class="c bad"><span class="n" id="fp">0</span><span class="t">False alarms</span></div><div class="c ok"><span class="n" id="tn">0</span><span class="t">True negatives</span></div>
+        </div>
+        <div class="mets" id="mets"></div>
+        <div class="verdict" id="verdict" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="pipeline">
+      <article class="stage"><h3>Hold-out testing</h3><p>Score the model on data it never saw in training. Use separate validation and test sets, or k-fold cross-validation.</p></article>
+      <article class="stage"><h3>Benchmarks</h3><p>Standard tests such as MMLU (knowledge), TruthfulQA (honesty), and HELM, which scores 7 metrics including calibration and fairness.</p></article>
+      <article class="stage"><h3>Subgroup &amp; bias audits</h3><p>Compare error rates across age, sex, language, and other groups. BBQ tests for social bias in answers.</p></article>
+      <article class="stage"><h3>Red-teaming &amp; human evaluation</h3><p>Experts probe for harms. Human raters judge quality; Chatbot Arena ranks models by blind human votes.</p></article>
+      <article class="stage"><h3>Production monitoring</h3><p>Track accuracy, drift, hallucination reports, and user feedback after launch, and re-validate when data changes.</p></article>
+    </div>
+
+    <div class="metric-table">
+      <div class="table-wrap">
+        <table>
+          <caption class="sr">Key performance metrics, what they measure, and why they matter for trust</caption>
+          <thead><tr><th>Metric</th><th>What it measures</th><th>Why it matters for trust</th></tr></thead>
+          <tbody>
+            <tr><td>Accuracy</td><td>Share of all predictions that are correct</td><td>Easy to understand, but misleading when one outcome is rare</td></tr>
+            <tr><td>Precision</td><td>Of the cases flagged, how many were real</td><td>Low precision means false alarms, and users start to ignore the model</td></tr>
+            <tr><td>Recall (sensitivity)</td><td>Of the real cases, how many were caught</td><td>Critical when a miss is dangerous, as in medicine or fraud detection</td></tr>
+            <tr><td>F1 score</td><td>Balance of precision and recall</td><td>A single summary number when both kinds of error matter</td></tr>
+            <tr><td>AUC-ROC</td><td>Ranking quality across all thresholds</td><td>Compares models independently of where the threshold is set</td></tr>
+            <tr><td>Calibration (ECE)</td><td>Whether &ldquo;90% confident&rdquo; is right 90% of the time</td><td>Confidence that users can rely on. OpenAI found RLHF reduced GPT-4&rsquo;s calibration</td></tr>
+            <tr><td>Hallucination rate</td><td>Share of answers with made-up facts</td><td>A core LLM reliability metric, tested with fact-checked question sets</td></tr>
+            <tr><td>Fairness gap</td><td>Difference in error rates between groups</td><td>Shows whether the model is reliable for everyone, not only on average</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- SOLUTIONS -->
+  <section class="block" id="solutions"><div class="wrap">
+    <div class="eyebrow">Part 3 &middot; Current solutions &amp; techniques</div>
+    <h2>From explaining outputs <span>to reading the model&rsquo;s mind</span></h2>
+    <p class="lede section-intro">Techniques range from documentation anyone can read to research tools that trace computations inside the network. The bars show how deeply each one looks into the model.</p>
+    <div class="tech-map">
+      <article class="tech" style="--c:#00d4aa"><div class="lvl">Documentation</div><h3>Model &amp; system cards</h3><p>Published reports on training data, intended use, test results, and known limits. The concept was introduced by Google researchers in 2019 and is now standard across labs.</p><div class="depth" aria-label="Depth 1 of 4"><i class="on"></i><i></i><i></i><i></i></div><div class="depth-lbl">Looks at: the whole system</div></article>
+      <article class="tech" style="--c:#00c6ff"><div class="lvl">Output-level</div><h3>Attribution &amp; counterfactuals</h3><p>Integrated Gradients, SHAP, and LIME score which inputs drove a prediction. Google Cloud&rsquo;s Vertex AI and Meta&rsquo;s Captum provide them.</p><div class="depth" aria-label="Depth 2 of 4"><i class="on"></i><i class="on"></i><i></i><i></i></div><div class="depth-lbl">Looks at: inputs &rarr; output</div></article>
+      <article class="tech" style="--c:#f0a500"><div class="lvl">Reasoning-level</div><h3>Chain-of-thought &amp; monitoring</h3><p>Reasoning models show their steps. In 2025, researchers from OpenAI, Google DeepMind, Anthropic, and Meta jointly called for keeping that reasoning monitorable.</p><div class="depth" aria-label="Depth 3 of 4"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div><div class="depth-lbl">Looks at: stated reasoning</div></article>
+      <article class="tech" style="--c:#7b5cff"><div class="lvl">Mechanism-level</div><h3>Mechanistic interpretability</h3><p>Probes, sparse autoencoders, and circuit tracing find the concepts a network represents and how it combines them.</p><div class="depth" aria-label="Depth 4 of 4"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><div class="depth-lbl">Looks at: internal computation</div></article>
+    </div>
+
+    <div class="labs">
+      <article class="labcard">
+        <div class="org">Anthropic &middot; Claude</div><h3>Mapping concepts and tracing thoughts</h3>
+        <ul>
+          <li><span class="yr">2024</span><span><strong>Scaling Monosemanticity:</strong> found millions of interpretable features in Claude 3 Sonnet. Amplifying one feature produced &ldquo;Golden Gate Claude.&rdquo;</span></li>
+          <li><span class="yr">2025</span><span><strong>Circuit tracing:</strong> attribution graphs showed Claude 3.5 Haiku planning rhymes ahead and chaining facts. The tools were open-sourced.</span></li>
+          <li><span class="yr">2025</span><span><strong>Faithfulness research:</strong> measured how often reasoning models omit what really drove their answers.</span></li>
+        </ul>
+      </article>
+      <article class="labcard">
+        <div class="org">OpenAI &middot; GPT</div><h3>Using AI to explain AI</h3>
+        <ul>
+          <li><span class="yr">2023</span><span><strong>Automated neuron explanations:</strong> GPT-4 wrote and scored explanations for all 307,200 neurons in GPT-2.</span></li>
+          <li><span class="yr">2024</span><span><strong>Sparse autoencoders:</strong> extracted 16 million features from GPT-4 and released the training code.</span></li>
+          <li><span class="yr">2025</span><span><strong>Chain-of-thought monitoring:</strong> a second model reads the reasoning to catch reward hacking and misbehavior.</span></li>
+        </ul>
+      </article>
+      <article class="labcard">
+        <div class="org">Google &amp; Google DeepMind &middot; Gemini</div><h3>Open tools for the research community</h3>
+        <ul>
+          <li><span class="yr">2017</span><span><strong>Integrated Gradients:</strong> a widely used attribution method developed by Google researchers.</span></li>
+          <li><span class="yr">2020</span><span><strong>Learning Interpretability Tool (LIT):</strong> a visual tool for exploring NLP model behavior.</span></li>
+          <li><span class="yr">2024</span><span><strong>Gemma Scope:</strong> over 400 open sparse autoencoders covering every layer of Gemma 2.</span></li>
+        </ul>
+      </article>
+      <article class="labcard">
+        <div class="org">Meta &middot; Llama</div><h3>Openness as transparency</h3>
+        <ul>
+          <li><span class="yr">2019</span><span><strong>Captum:</strong> an open-source PyTorch library for attribution and interpretability.</span></li>
+          <li><span class="yr">2023+</span><span><strong>Open-weight Llama models:</strong> let independent researchers inspect internals that closed models do not expose.</span></li>
+          <li><span class="yr">2023+</span><span><strong>Detailed papers and model cards:</strong> publish data size, GPU-hours, emissions, and safety evaluations, alongside Llama Guard safety classifiers.</span></li>
+        </ul>
+      </article>
+    </div>
+  </div></section>
+
+  <!-- TAKEAWAYS -->
+  <section class="block" id="takeaways"><div class="wrap">
+    <div class="eyebrow">Part 4 &middot; Bringing it together</div>
+    <h2>What builds <span>trust in AI</span></h2>
+    <div class="trust" aria-label="Explainability plus validation plus performance metrics leads to trustworthy AI">
+      <div><b>Explainability</b>Why did it decide?</div><span class="plus" aria-hidden="true">+</span>
+      <div><b>Validation</b>Does it hold up on new data and for every group?</div><span class="plus" aria-hidden="true">+</span>
+      <div><b>Metrics</b>How often, and in what way, is it wrong?</div><span class="plus" aria-hidden="true">=</span>
+      <div class="res"><b>Trustworthy AI</b>Users can rely on it appropriately</div>
+    </div>
+    <div class="takeaways" style="margin-top:2rem">
+      <div class="tk"><span class="tk-num">01</span><p><strong>Match the explanation to the audience.</strong> A patient needs a reason, a doctor needs evidence and confidence, and an auditor needs documentation.</p></div>
+      <div class="tk"><span class="tk-num">02</span><p><strong>Verify explanations; don&rsquo;t just accept them.</strong> A model&rsquo;s self-explanation may be unfaithful. Cross-check it with attribution and counterfactual tests.</p></div>
+      <div class="tk"><span class="tk-num">03</span><p><strong>Choose metrics based on what an error costs.</strong> In triage a miss is worse than a false alarm, so prioritize recall. In spam filtering, prioritize precision.</p></div>
+      <div class="tk"><span class="tk-num">04</span><p><strong>Validate continuously.</strong> Benchmarks at launch are not enough. Monitor for drift, bias, and hallucinations in production.</p></div>
+    </div>
+  </div></section>
+
+  <!-- SOURCES -->
+  <section class="block" id="sources"><div class="wrap">
+    <div class="eyebrow">Sources</div>
+    <h2 style="font-size:1.4rem">References</h2>
+    <ul class="sources">
+      <li><a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/" target="_blank" rel="noopener">Anthropic (2024). Scaling Monosemanticity</a></li>
+      <li><a href="https://www.anthropic.com/research/tracing-thoughts-language-model" target="_blank" rel="noopener">Anthropic (2025). Tracing the thoughts of a large language model</a></li>
+      <li><a href="https://www.anthropic.com/research/reasoning-models-dont-say-think" target="_blank" rel="noopener">Anthropic (2025). Reasoning models don&rsquo;t always say what they think</a></li>
+      <li><a href="https://openai.com/index/language-models-can-explain-neurons-in-language-models/" target="_blank" rel="noopener">OpenAI (2023). Language models can explain neurons in language models</a></li>
+      <li><a href="https://openai.com/index/extracting-concepts-from-gpt-4/" target="_blank" rel="noopener">OpenAI (2024). Extracting concepts from GPT-4</a></li>
+      <li><a href="https://openai.com/index/chain-of-thought-monitoring/" target="_blank" rel="noopener">OpenAI (2025). Detecting misbehavior in frontier reasoning models</a></li>
+      <li><a href="https://arxiv.org/abs/2507.11473" target="_blank" rel="noopener">Korbak et al. (2025). Chain of Thought Monitorability</a></li>
+      <li><a href="https://cdn.openai.com/papers/gpt-4.pdf" target="_blank" rel="noopener">OpenAI (2023). GPT-4 Technical Report (calibration)</a></li>
+      <li><a href="https://deepmind.google/discover/blog/gemma-scope-helping-the-safety-community-shed-light-on-the-inner-workings-of-language-models/" target="_blank" rel="noopener">Google DeepMind (2024). Gemma Scope</a></li>
+      <li><a href="https://arxiv.org/abs/1703.01365" target="_blank" rel="noopener">Sundararajan et al. (2017). Integrated Gradients</a></li>
+      <li><a href="https://pair-code.github.io/lit/" target="_blank" rel="noopener">Google PAIR. Learning Interpretability Tool</a></li>
+      <li><a href="https://arxiv.org/abs/1810.03993" target="_blank" rel="noopener">Mitchell et al. (2019). Model Cards for Model Reporting</a></li>
+      <li><a href="https://captum.ai/" target="_blank" rel="noopener">Meta. Captum: model interpretability for PyTorch</a></li>
+      <li><a href="https://arxiv.org/abs/2407.21783" target="_blank" rel="noopener">Meta (2024). The Llama 3 Herd of Models</a></li>
+      <li><a href="https://arxiv.org/abs/1902.10186" target="_blank" rel="noopener">Jain &amp; Wallace (2019). Attention is not Explanation</a></li>
+      <li><a href="https://crfm.stanford.edu/helm/" target="_blank" rel="noopener">Stanford CRFM. HELM: Holistic Evaluation of Language Models</a></li>
+      <li><a href="https://www.nist.gov/itl/ai-risk-management-framework" target="_blank" rel="noopener">NIST (2023). AI Risk Management Framework 1.0</a></li>
+      <li><a href="https://artificialintelligenceact.eu/" target="_blank" rel="noopener">EU Artificial Intelligence Act</a></li>
+      <li><a href="https://www.consumerfinance.gov/compliance/circulars/circular-2022-03-adverse-action-notification-requirements-in-connection-with-credit-decisions-based-on-complex-algorithms/" target="_blank" rel="noopener">CFPB Circular 2022-03</a></li>
+    </ul>
+    <a class="cta" href="artifact_13_explainer.html">Read the explanatory document &rarr;</a>
+  </div></section>
+
+  <footer>Chaitanya Merugu &middot; Portfolio artifact 13 &middot; <a href="index.html#artifacts">Back to portfolio</a></footer>
+
+  <script>
+    const tip = document.getElementById("tip");
+    function showTip(html, x, y) {
+      tip.innerHTML = html; tip.style.opacity = 1;
+      const r = tip.getBoundingClientRect();
+      tip.style.left = Math.max(8, Math.min(window.innerWidth - r.width - 12, x + 14)) + "px";
+      tip.style.top = Math.max(8, y - r.height - 12) + "px";
+    }
+    const hideTip = () => tip.style.opacity = 0;
+    function bindTip(node, html) {
+      node.addEventListener("mousemove", e => { const h = html(); h ? showTip(h, e.clientX, e.clientY) : hideTip(); });
+      node.addEventListener("mouseleave", hideTip);
+      node.addEventListener("focus", () => { const h = html(), b = node.getBoundingClientRect(); h ? showTip(h, b.left + b.width / 2, b.top) : hideTip(); });
+      node.addEventListener("blur", hideTip);
+    }
+
+    /* ---------- Demo 1: token attribution ---------- */
+    const tokens = [
+      ["58-year-old", .35], ["male,", .08], ["smoker,", .30], ["reports", .02], ["chest pain", .62],
+      ["radiating to left arm", .95], ["and", 0], ["shortness of breath", .70], ["for 40 minutes,", .28],
+      ["sweating,", .40], ["mild", .02], ["nausea.", .15]
+    ];
+    const note = document.getElementById("note");
+    const spans = tokens.map(([w, s]) => {
+      const sp = document.createElement("span");
+      sp.className = "tok"; sp.textContent = w; sp.dataset.s = s;
+      note.appendChild(sp); note.appendChild(document.createTextNode(" "));
+      return sp;
+    });
+    function setHeat(on) {
+      spans.forEach(sp => {
+        const s = +sp.dataset.s;
+        sp.style.background = on ? `rgba(0,198,255,${0.05 + s * 0.7})` : "transparent";
+        if (on) { sp.tabIndex = 0; sp.setAttribute("aria-label", `${sp.textContent} attribution ${s.toFixed(2)}`); }
+        else { sp.removeAttribute("tabindex"); sp.removeAttribute("aria-label"); }
+      });
+      document.getElementById("scale").style.visibility = on ? "visible" : "hidden";
+    }
+    spans.forEach(sp => bindTip(sp, () => tip.dataset.on === "1"
+      ? `<b>&ldquo;${sp.textContent}&rdquo;</b><span class="s">Attribution score: ${(+sp.dataset.s).toFixed(2)} (share of the push toward &ldquo;urgent&rdquo;)</span>` : ""));
+    tip.dataset.on = "1";
+    setHeat(true);
+
+    const tabs = [...document.querySelectorAll("[role=tab]")];
+    function selectTab(t) {
+      tabs.forEach(b => {
+        const sel = b === t;
+        b.setAttribute("aria-selected", sel); b.tabIndex = sel ? 0 : -1;
+        document.getElementById(b.getAttribute("aria-controls")).hidden = !sel;
+      });
+      const attr = t.id === "t-attr";
+      tip.dataset.on = attr ? "1" : "0"; setHeat(attr);
+    }
+    tabs.forEach((t, i) => {
+      t.addEventListener("click", () => selectTab(t));
+      t.addEventListener("keydown", e => {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        const n = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+        n.focus(); selectTab(n);
+      });
+    });
+
+    /* ---------- Demo 2: metrics lab ---------- */
+    // Deterministic simulated scores: 50 truly urgent, 150 not urgent
+    let seed = 20251113; const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+    const gauss = () => { let u = 0; for (let i = 0; i < 6; i++) u += rnd(); return (u - 3) / Math.sqrt(.5); };
+    const clamp = v => Math.min(.999, Math.max(.001, v));
+    const pos = Array.from({ length: 50 }, () => clamp(.67 + .15 * gauss()));
+    const neg = Array.from({ length: 150 }, () => clamp(.32 + .13 * gauss()));
+    const BINS = 20;
+    const bin = arr => { const b = Array(BINS).fill(0); arr.forEach(v => b[Math.min(BINS - 1, Math.floor(v * BINS))]++); return b; };
+    const pb = bin(pos), nb = bin(neg);
+
+    const NS = "http://www.w3.org/2000/svg";
+    const svg = document.getElementById("hist");
+    const el = (t, a, p, txt) => { const n = document.createElementNS(NS, t); for (const k in a) n.setAttribute(k, a[k]); if (txt != null) n.textContent = txt; if (p) p.appendChild(n); return n; };
+    const W = 560, H = 230, L = 32, R = 8, T = 10, B = 28;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const maxY = Math.ceil(Math.max(...pb.map((v, i) => Math.max(v, nb[i]))) / 5) * 5;
+    const X = v => L + v * (W - L - R), Y = v => T + (1 - v / maxY) * (H - T - B);
+    for (let t = 0; t <= maxY; t += 5) {
+      el("line", { x1: L, x2: W - R, y1: Y(t), y2: Y(t), stroke: "rgba(255,255,255,.08)" }, svg);
+      el("text", { x: L - 6, y: Y(t) + 3.5, fill: "#8f99ab", "font-size": 10, "text-anchor": "end", "font-family": "DM Sans" }, svg, t);
+    }
+    [0, .25, .5, .75, 1].forEach(t => el("text", { x: X(t), y: H - 10, fill: "#8f99ab", "font-size": 10, "text-anchor": "middle", "font-family": "DM Sans" }, svg, t.toFixed(2)));
+    el("text", { x: W - R, y: H, fill: "#8f99ab", "font-size": 10, "text-anchor": "end", "font-family": "DM Sans" }, svg, "risk score →");
+    const bw = (W - L - R) / BINS, gap = 2, barW = (bw - gap * 3) / 2;
+    const rectsByBin = [];
+    for (let i = 0; i < BINS; i++) {
+      const g = el("g", { class: "hit", tabindex: 0, role: "img", "aria-label": `Scores ${(i / BINS).toFixed(2)} to ${((i + 1) / BINS).toFixed(2)}: ${pb[i]} urgent, ${nb[i]} not urgent` }, svg);
+      el("rect", { class: "hl", x: X(i / BINS), y: T, width: bw, height: H - T - B, fill: "rgba(255,255,255,.05)", opacity: 0 }, g);
+      const x0 = X(i / BINS) + gap;
+      // bars with 4px rounded top, square baseline
+      const bar = (x, v, c) => {
+        if (!v) return null;
+        const y = Y(v), h = Y(0) - y, r = Math.min(3, h, barW / 2);
+        return el("path", { d: `M${x},${Y(0)}V${y + r}Q${x},${y} ${x + r},${y}H${x + barW - r}Q${x + barW},${y} ${x + barW},${y + r}V${Y(0)}Z`, fill: c }, g);
+      };
+      rectsByBin.push([bar(x0, nb[i], "#c88400"), bar(x0 + barW + gap, pb[i], "#0a9ad0")]);
+      bindTip(g, () => `<b>Score ${(i / BINS).toFixed(2)}&ndash;${((i + 1) / BINS).toFixed(2)}</b><span class="s">${pb[i]} truly urgent &middot; ${nb[i]} not urgent<br>${(i / BINS) >= thr - 1e-9 ? "Flagged as urgent" : "Not flagged"} at this threshold</span>`);
+    }
+    el("line", { x1: L, x2: W - R, y1: Y(0), y2: Y(0), stroke: "#8f99ab", opacity: .6 }, svg);
+    const tl = el("line", { y1: T - 4, y2: Y(0), stroke: "#e8eaf0", "stroke-width": 2, "stroke-dasharray": "4 3" }, svg);
+    const tlab = el("text", { y: T + 4, fill: "#e8eaf0", "font-size": 10.5, "font-family": "DM Sans" }, svg, "flag ≥");
+
+    const slider = document.getElementById("thr"), out = document.getElementById("thrOut");
+    const metsEl = document.getElementById("mets");
+    const MET = ["Accuracy", "Precision", "Recall", "F1 score"];
+    const metRows = MET.map(m => {
+      const d = document.createElement("div"); d.className = "met";
+      d.innerHTML = `<span class="nm">${m}</span><span class="bar"><i></i></span><span class="v"></span>`;
+      metsEl.appendChild(d); return d;
+    });
+    let thr = .5;
+    function update() {
+      thr = +slider.value; out.textContent = thr.toFixed(2);
+      const tp = pos.filter(v => v >= thr).length, fn = 50 - tp;
+      const fp = neg.filter(v => v >= thr).length, tn = 150 - fp;
+      ["tp", "fn", "fp", "tn"].forEach((k, i) => document.getElementById(k).textContent = [tp, fn, fp, tn][i]);
+      const acc = (tp + tn) / 200, prec = tp + fp ? tp / (tp + fp) : 0, rec = tp / 50, f1 = prec + rec ? 2 * prec * rec / (prec + rec) : 0;
+      [acc, prec, rec, f1].forEach((v, i) => { metRows[i].querySelector("i").style.width = (v * 100) + "%"; metRows[i].querySelector(".v").textContent = Math.round(v * 100) + "%"; });
+      const x = X(thr); tl.setAttribute("x1", x); tl.setAttribute("x2", x);
+      const right = x < W - 60; tlab.setAttribute("x", right ? x + 5 : x - 5); tlab.setAttribute("text-anchor", right ? "start" : "end"); tlab.textContent = "flag ≥ " + thr.toFixed(2);
+      rectsByBin.forEach((pair, i) => pair.forEach(r => r && r.setAttribute("opacity", (i + 1) / BINS <= thr + 1e-9 ? .45 : 1)));
+      const v = document.getElementById("verdict");
+      if (rec >= .95) v.innerHTML = `<strong>Safety-first setting.</strong> ${fn === 0 ? "No urgent patients are" : fn === 1 ? "Only 1 urgent patient is" : `Only ${fn} urgent patients are`} missed, but ${fp} false alarms will tie up staff. Hospitals often accept this trade-off.`;
+      else if (prec >= .9) v.innerHTML = `<strong>Precision-first setting.</strong> Almost every flag is real, but ${fn} urgent patients are missed. In triage, that is dangerous.`;
+      else v.innerHTML = `<strong>Balanced setting.</strong> Accuracy is ${Math.round(acc * 100)}%, but ${fn} urgent patients are still missed. A single accuracy number hides which mistakes the model makes.`;
+    }
+    slider.addEventListener("input", update);
+    update();
+  </script>
+</body>
+</html>
