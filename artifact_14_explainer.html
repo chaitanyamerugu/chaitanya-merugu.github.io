@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Explanatory Document — Artifact 14 · Chaitanya Merugu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0a0f1e;--surface:#111827;--accent:#00c6ff;--accent2:#7b5cff;--teal:#00d4aa;--text:#e8eaf0;--muted:#a3acbb;--border:rgba(255,255,255,.08)}
+    *{margin:0;padding:0;box-sizing:border-box}body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+    nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 5%;background:rgba(10,15,30,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+    .nav-logo{font-family:Syne,sans-serif;font-weight:800;font-size:1.3rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}nav a.back{color:var(--muted);text-decoration:none;font-size:.88rem}nav a.back:hover{color:var(--accent)}
+    main{max-width:780px;margin:0 auto;padding:7rem 5% 4rem}
+    .eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--teal)}
+    h1,h2{font-family:Syne,sans-serif}h1{font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.15;margin:.6rem 0 .4rem}h2{font-size:1.2rem;margin:2.2rem 0 .6rem;padding-top:1.2rem;border-top:1px solid var(--border)}
+    .meta{color:var(--muted);font-size:.85rem}p,li{color:var(--muted);font-size:.95rem}p+p{margin-top:.7rem}strong{color:var(--text)}ul{padding-left:1.2rem;display:grid;gap:.4rem;margin-top:.5rem}
+    a{color:var(--teal)}.btn{display:inline-block;margin-top:2rem;color:var(--bg);background:linear-gradient(135deg,var(--accent),var(--accent2));padding:.55rem 1.1rem;border-radius:50px;font-weight:600;font-size:.88rem;text-decoration:none}
+    @media print{body{background:#fff;color:#111}nav,.btn{display:none}main{padding-top:0}p,li,.meta{color:#333}strong,h1,h2{color:#111}.eyebrow{color:#047857}h2{border-color:#ddd}a{color:#047857}}
+  </style>
+</head>
+<body>
+  <nav><a class="nav-logo" href="index.html">CM</a><a class="back" href="artifact_14.html">&larr; Back to the decision matrix</a></nav>
+  <main>
+    <div class="eyebrow">Explanatory document &middot; Portfolio artifact 14</div>
+    <h1>Bigger Isn&rsquo;t Always Better: A Decision Matrix for Choosing Pre-trained Models</h1>
+    <p class="meta">Chaitanya Merugu &middot; Model selection &middot; <a href="artifact_14.html">View the interactive decision matrix</a></p>
+
+    <h2>Summary</h2>
+    <p>This artifact compares <strong>13 models across three domains</strong>. For NLP and generative AI: GPT-4o, Gemini 1.5 Flash, Llama 3.1 8B, BERT-base, and DistilBERT. For computer vision: MobileNetV3-Large, EfficientNet-B0, ResNet-50, and EfficientNet-B7. For tabular data: XGBoost, LightGBM, Random Forest, and TabPFN v2. Each model is rated from 1 to 5 on five criteria: <strong>size, accuracy, speed, explainability, and energy and cost</strong>. Every rating is shown next to the evidence behind it, such as parameter count, benchmark score, or GFLOPs. Readers can choose a scenario preset or set their own weights, and the matrix recalculates a 0&ndash;100 fit score and highlights the top pick in each domain.</p>
+    <p>The main finding is that <strong>no model wins on every criterion, and the largest model is often not the right choice</strong>. In vision, EfficientNet-B7 uses about 170&times; the compute of MobileNetV3 to gain 8.9 points of ImageNet accuracy. In NLP, DistilBERT keeps 97% of BERT&rsquo;s performance while being 40% smaller and 60% faster. In tabular data, gradient-boosted trees remain the most accurate, cheapest, and easiest-to-explain option. Explainability tends to fall as size grows and access narrows: tree models have exact SHAP explanations, CNNs and BERT can be inspected with Grad-CAM and attribution, and closed LLMs offer only self-explanations.</p>
+
+    <h2>Key considerations</h2>
+    <ul>
+      <li><strong>Accuracy is compared within a domain.</strong> MMLU, GLUE, and ImageNet measure different things, so accuracy ratings are relative to the other models in the same domain, and rankings are only made within a domain.</li>
+      <li><strong>Consistent sources where possible.</strong> All vision figures come from torchvision&rsquo;s ImageNet benchmarks, so the models were measured the same way. NLP figures come from each model&rsquo;s paper or official model card.</li>
+      <li><strong>Gaps in the data are labeled.</strong> GPT-4o and Gemini do not disclose parameter counts, so their size ratings are estimates based on API-only deployment. Tree-based models are trained per dataset rather than downloaded pre-trained, so their accuracy depends on the data. The page says so, and it includes TabPFN as a true pre-trained tabular model.</li>
+      <li><strong>Ratings involve judgment.</strong> The 1&ndash;5 ratings are my assessment of the cited evidence. Adjustable weights let readers apply their own priorities instead of accepting a single fixed ranking.</li>
+      <li><strong>Explainability as a selection criterion.</strong> In regulated settings, such as credit decisions that need adverse-action reasons, explainability can rule out models regardless of their accuracy. That is why it sits in the matrix alongside size, accuracy, and speed.</li>
+    </ul>
+
+    <h2>Design rationale</h2>
+    <ul>
+      <li><strong>A different skill set from earlier artifacts.</strong> Artifact 12 was a data infographic and Artifact 13 an interactive explainer about explainable AI. This artifact is a <em>decision-support tool</em>: it shows model evaluation, multi-criteria analysis, and the ability to turn research into a practical recommendation.</li>
+      <li><strong>An interactive matrix instead of a fixed one.</strong> The best model depends on the use case, so readers can switch between five presets (balanced, mobile and edge, regulated, maximum accuracy, low cost) and watch the top pick change. Weighted scoring is a standard method for multi-criteria decisions, and the formula is printed under the table.</li>
+      <li><strong>Evidence in every cell.</strong> Each rating bar sits above the number it is based on, so readers can check the rating instead of trusting a color.</li>
+      <li><strong>Charts chosen for their job.</strong> A scatter plot shows the accuracy-versus-compute curve for vision models, with an &ldquo;efficient frontier&rdquo; line. A log-scale bar chart shows model size, because sizes range from 5 million to 8 billion parameters, which a linear scale could not show.</li>
+      <li><strong>Color and icons.</strong> Each domain has its own color (blue for NLP, violet for vision, amber for tabular), which I checked with a color-vision-deficiency validator against the dark background. Domains are also always labeled in text, so color is never the only cue. Rating bars use one accent color, and the top pick in each domain gets a &ldquo;&#9733; Top pick&rdquo; badge and a highlighted row.</li>
+      <li><strong>Structure.</strong> The page follows the assignment&rsquo;s required sections: introduction, methodology, decision matrix, analysis and recommendations, and conclusion, with six scenario recommendations.</li>
+      <li><strong>Accessibility.</strong> Chart marks can be reached with the keyboard and have tooltips. The charts have screen-reader descriptions, the matrix is a real HTML table with a caption, rating bars have text labels, the picks update in a live region, and the page has a responsive layout and a print stylesheet. It uses the same fonts, colors, and navigation as the rest of the portfolio.</li>
+    </ul>
+
+    <h2>Sources</h2>
+    <p>OpenAI, <em>Hello GPT-4o</em> (2024); Google, <em>Gemini 1.5</em> technical report (2024); Meta, Llama 3.1 model card and <em>The Llama 3 Herd of Models</em> (2024); Devlin et al., <em>BERT</em> (2019); Sanh et al., <em>DistilBERT</em> (2019); PyTorch torchvision model benchmarks; Howard et al., <em>MobileNetV3</em> (2019); Tan &amp; Le, <em>EfficientNet</em> (2019); He et al., <em>ResNet</em> (2016); Chen &amp; Guestrin, <em>XGBoost</em> (2016); Ke et al., <em>LightGBM</em> (2017); Breiman, <em>Random Forests</em> (2001); Hollmann et al., <em>TabPFN</em> (Nature, 2025); Grinsztajn et al. (2022) and Shwartz-Ziv &amp; Armon (2022) on tabular deep learning; Lundberg et al., <em>TreeSHAP</em> (2020); Selvaraju et al., <em>Grad-CAM</em> (2017); and Strubell et al. (2019) on energy use. Full links are in the <a href="artifact_14.html#sources">artifact&rsquo;s sources section</a>.</p>
+
+    <a class="btn" href="artifact_14.html">View the interactive decision matrix &rarr;</a>
+  </main>
+</body>
+</html>
